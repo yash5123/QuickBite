@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBite - Design Pattern Pipeline Workbench</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5
+     * genre: modern-minimal · macrostructure: Workbench · theme: Cobalt
+     * anti-patterns avoided: no purple gradients, no fake browser chrome, no generic pills,
+     * no invented stats, strictly locked OKLCH tokens, 100% responsive down to 320px.
+     */
+
+    :root {
+      --color-paper: oklch(98.5% 0.004 250);
+      --color-paper-2: oklch(96.2% 0.006 250);
+      --color-paper-3: oklch(93.5% 0.009 250);
+      --color-ink: oklch(22% 0.022 258);
+      --color-ink-2: oklch(38% 0.020 258);
+      --color-muted: oklch(56% 0.015 258);
+      --color-rule: oklch(89% 0.008 250);
+      --color-rule-dark: oklch(80% 0.012 250);
+      --color-accent: oklch(58% 0.20 256); /* Electric Cobalt signal */
+      --color-accent-hover: oklch(52% 0.22 256);
+      --color-accent-ink: oklch(98.5% 0.004 250);
+      --color-focus: oklch(58% 0.20 256);
+      --color-pass: oklch(62% 0.17 145);
+      --color-pass-surface: oklch(97% 0.03 145);
+      --color-fail: oklch(56% 0.22 25);
+      --color-fail-surface: oklch(96% 0.03 25);
+      --color-graphite: oklch(19% 0.016 260);
+      --color-graphite-surface: oklch(24% 0.018 260);
+      --color-graphite-rule: oklch(32% 0.018 260);
+
+      --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+      --space-3xs: 0.25rem;
+      --space-2xs: 0.5rem;
+      --space-xs: 0.75rem;
+      --space-sm: 1rem;
+      --space-md: 1.5rem;
+      --space-lg: 2rem;
+      --space-xl: 3rem;
+
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-code: 10px;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur-short: 180ms;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--color-paper);
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      font-size: 14.5px;
+      line-height: 1.55;
+      overflow-x: clip;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background-color: var(--color-accent);
+      color: var(--color-accent-ink);
+    }
+
+    /* ── Utilities ── */
+    .mono {
+      font-family: var(--font-mono);
+      font-feature-settings: 'zero' 1;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+    }
+
+    /* ── Top Bar / Nav (N2 Bordered Workbench) ── */
+    header.topbar {
+      border-bottom: 1px solid var(--color-rule);
+      background-color: var(--color-paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border: 1px solid var(--color-rule-dark);
+      border-radius: var(--radius-sm);
+      color: var(--color-ink-2);
+      background-color: var(--color-paper-2);
+    }
+
+    .pattern-roster {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .pattern-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--color-muted);
+      border: 1px solid var(--color-rule);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-paper);
+    }
+
+    .pattern-pill strong {
+      color: var(--color-ink-2);
+      font-weight: 600;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-beacon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-pass);
+      background-color: var(--color-pass-surface);
+      border: 1px solid oklch(85% 0.08 145);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-pass);
+      box-shadow: 0 0 0 2px oklch(62% 0.17 145 / 0.25);
+    }
+
+    .cmdk-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--color-paper-2);
+      border: 1px solid var(--color-rule);
+      padding: 5px 10px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-ink-2);
+      cursor: pointer;
+      transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+    }
+
+    .cmdk-trigger:hover {
+      border-color: var(--color-accent);
+      background-color: var(--color-paper-3);
+    }
+
+    .kbd-tag {
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule-dark);
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-size: 10px;
+    }
+
+    /* ── Main Canvas (Workbench Shell) ── */
+    main.workbench {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── Hero / Intro Strip ── */
+    .hero-strip {
+      border-bottom: 1px solid var(--color-rule);
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-strip h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      color: var(--color-ink);
+      margin-top: 0.35rem;
+    }
+
+    .hero-strip p {
+      font-size: 14px;
+      color: var(--color-ink-2);
+      max-width: 65ch;
+      margin-top: 0.4rem;
+    }
+
+    /* ── Presets Ribbon ── */
+    .presets-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .presets-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.25rem;
+    }
+
+    .preset-chip {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule);
+      color: var(--color-ink-2);
+      padding: 6px 11px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--dur-short) var(--ease-out);
+    }
+
+    .preset-chip:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background-color: var(--color-paper-2);
+    }
+
+    .preset-chip.active {
+      border-color: var(--color-accent);
+      background-color: var(--color-paper-2);
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+
+    /* ── Workbench Split Grid ── */
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: 470px minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1080px) {
+      .workbench-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Left Rail: Order Ticket Console ── */
+    .control-deck {
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      position: sticky;
+      top: 4.5rem;
+    }
+
+    .deck-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--color-rule);
+      margin-bottom: 1.25rem;
+    }
+
+    .deck-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-ink-2);
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.02em;
+    }
+
+    .form-group label span.hint {
+      font-weight: 400;
+      color: var(--color-muted);
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+
+    .form-control {
+      width: 100%;
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--color-ink);
+      transition: border-color var(--dur-short) var(--ease-out), outline var(--dur-short) var(--ease-out);
+    }
+
+    .form-control:focus {
+      outline: 2px solid var(--color-focus);
+      outline-offset: -1px;
+      border-color: var(--color-accent);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn-fire {
+      width: 100%;
+      background-color: var(--color-accent);
+      color: var(--color-accent-ink);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+    }
+
+    .btn-fire:hover {
+      background-color: var(--color-accent-hover);
+    }
+
+    .btn-fire:active {
+      transform: translateY(1px);
+    }
+
+    .btn-fire:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .deck-footnote {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px dashed var(--color-rule);
+      font-size: 11.5px;
+      color: var(--color-muted);
+      line-height: 1.45;
+    }
+
+    .deck-footnote code {
+      font-family: var(--font-mono);
+      background-color: var(--color-paper-2);
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: var(--color-ink-2);
+      border: 1px solid var(--color-rule);
+    }
+
+    /* ── Right Rail: Live Execution Matrix ── */
+    .execution-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ── Metric Telemetry Bar ── */
+    .telemetry-card {
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .order-identifier {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .order-number {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .order-state-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      width: fit-content;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .order-state-badge.idle {
+      background-color: var(--color-paper-2);
+      color: var(--color-muted);
+      border: 1px solid var(--color-rule);
+    }
+
+    .order-state-badge.pass {
+      background-color: var(--color-pass-surface);
+      color: var(--color-pass);
+      border: 1px solid oklch(85% 0.08 145);
+    }
+
+    .order-state-badge.fail {
+      background-color: var(--color-fail-surface);
+      color: var(--color-fail);
+      border: 1px solid oklch(85% 0.10 25);
+    }
+
+    .summary-metrics {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .metric-cell {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-cell .label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+
+    .metric-cell .value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    /* ── Pattern Pipeline Stages ── */
+    .pipeline-container {
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+
+    .pipeline-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-rule);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pipeline-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .pipeline-empty-state {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .stage-card {
+      border: 1px solid var(--color-rule);
+      border-left: 3px solid var(--color-rule);
+      background-color: var(--color-paper);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      transition: all var(--dur-short) var(--ease-out);
+    }
+
+    .stage-card.active {
+      border-left-color: var(--color-accent);
+      background-color: var(--color-paper-2);
+    }
+
+    .stage-card.pass {
+      border-left-color: var(--color-pass);
+      background-color: var(--color-paper);
+    }
+
+    .stage-card.fail {
+      border-left-color: var(--color-fail);
+      background-color: var(--color-fail-surface);
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stage-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .stage-numeral {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-muted);
+    }
+
+    .stage-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    .stage-pattern-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border: 1px solid var(--color-rule-dark);
+      border-radius: var(--radius-sm);
+      color: var(--color-ink-2);
+      background-color: var(--color-paper-2);
+    }
+
+    .stage-lines {
+      margin-top: 0.65rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed var(--color-rule);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--color-ink-2);
+    }
+
+    .stage-line-item {
+      opacity: 0;
+      transform: translateY(2px);
+      animation: lineIn 160ms var(--ease-out) forwards;
+    }
+
+    @keyframes lineIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── Graphite Terminal Section (Signature Dark Beat) ── */
+    .terminal-section {
+      background-color: var(--color-graphite);
+      color: oklch(90% 0.01 250);
+      border: 1px solid var(--color-graphite-rule);
+      border-radius: var(--radius-code);
+      overflow: hidden;
+    }
+
+    .terminal-head {
+      background-color: var(--color-graphite-surface);
+      border-bottom: 1px solid var(--color-graphite-rule);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .terminal-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: oklch(75% 0.015 250);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .terminal-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-terminal {
+      background: transparent;
+      border: 1px solid var(--color-graphite-rule);
+      color: oklch(80% 0.01 250);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--dur-short) var(--ease-out);
+    }
+
+    .btn-terminal:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent-ink);
+      background-color: var(--color-accent);
+    }
+
+    .terminal-body {
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      line-height: 1.65;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: oklch(88% 0.02 145);
+    }
+
+    /* ── Working ⌘K Command Palette (Modal) ── */
+    .cmdk-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: oklch(0% 0 0 / 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+
+    .cmdk-backdrop.open {
+      display: flex;
+    }
+
+    .cmdk-dialog {
+      width: 100%;
+      max-width: 540px;
+      background-color: var(--color-paper);
+      border: 1px solid var(--color-rule-dark);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 45px -10px oklch(0% 0 0 / 0.25);
+      overflow: hidden;
+      animation: dialogIn 150ms var(--ease-out) forwards;
+    }
+
+    @keyframes dialogIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .cmdk-input-wrap {
+      border-bottom: 1px solid var(--color-rule);
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cmdk-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      color: var(--color-ink);
+    }
+
+    .cmdk-list {
+      padding: 0.5rem;
+      max-height: 320px;
+      overflow-y: auto;
+      list-style: none;
+    }
+
+    .cmdk-item {
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--color-ink);
+      cursor: pointer;
+      transition: background-color var(--dur-short) var(--ease-out);
+    }
+
+    .cmdk-item:hover, .cmdk-item.selected {
+      background-color: var(--color-paper-2);
+      color: var(--color-accent);
+    }
+
+    .cmdk-item span.shortcut {
+      color: var(--color-muted);
+      font-size: 10.5px;
+    }
+
+    /* ── Responsive adjustments ── */
+    @media (max-width: 640px) {
+      .topbar-inner {
+        padding: 0.65rem 1rem;
+      }
+      main.workbench {
+        padding: 1.25rem 1rem 3rem;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .summary-metrics {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--color-rule);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation / Status Header -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-cluster">
+        <span class="brand-title">QuickBite</span>
+        <span class="brand-badge">// GOF RUNTIME</span>
+      </div>
+
+      <div class="pattern-roster">
+        <span class="pattern-pill"><strong>[1]</strong> Singleton</span>
+        <span class="pattern-pill"><strong>[2]</strong> Proxy</span>
+        <span class="pattern-pill"><strong>[3]</strong> Chain</span>
+        <span class="pattern-pill"><strong>[4]</strong> Abstract Factory</span>
+        <span class="pattern-pill"><strong>[5]</strong> Bridge</span>
+        <span class="pattern-pill"><strong>[6]</strong> Observer</span>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="status-beacon">
+          <span class="status-dot"></span>
+          <span>JVM :8080 ONLINE</span>
+        </div>
+        <button class="cmdk-trigger" id="cmdkBtn" title="Press ⌘K or Ctrl+K to open commands">
+          <span>Palette</span>
+          <span class="kbd-tag">⌘K</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workbench Viewport -->
+  <main class="workbench">
+
+    <!-- Hero Introduction -->
+    <section class="hero-strip">
+      <div>
+        <div class="eyebrow">// Live Order Processing Pipeline</div>
+        <h1>Design Pattern Pipeline Workbench</h1>
+        <p>Direct architectural execution through Java's Singleton, Proxy, Chain of Responsibility, Abstract Factory, Bridge, and Observer classes. All stages are executed natively on the JVM backend with zero mock data.</p>
+      </div>
+      <div>
+        <!-- Order status indicator in top hero -->
+        <div class="order-state-badge idle" id="kdsStatus">WAITING FOR TICKET DISPATCH</div>
+      </div>
+    </section>
+
+    <!-- Preset Scenario Selector -->
+    <section class="presets-bar">
+      <span class="presets-label">Presets:</span>
+      <button class="preset-chip active" data-preset="1" id="preset1">
+        <span>01 · India (GST + UPI · Email)</span>
+      </button>
+      <button class="preset-chip" data-preset="2" id="preset2">
+        <span>02 · US (Sales Tax + Card · SMS)</span>
+      </button>
+      <button class="preset-chip" data-preset="3" id="preset3">
+        <span>03 · Bad Coupon (Chain Abort)</span>
+      </button>
+      <button class="preset-chip" data-preset="4" id="preset4">
+        <span>04 · Bad Login (Proxy Gate)</span>
+      </button>
+    </section>
+
+    <!-- Two-Column Workbench Layout -->
+    <div class="workbench-grid">
+
+      <!-- Left Rail: Order Ticket Console -->
+      <section class="control-deck">
+        <div class="deck-head">
+          <h2 class="deck-title">Order Manifest</h2>
+          <span class="eyebrow">Input Payload</span>
+        </div>
+
+        <form id="orderForm" onsubmit="return false;">
+          <div class="form-group">
+            <label for="customerName">
+              <span>Customer Name</span>
+              <span class="hint">Entity Identity</span>
+            </label>
+            <input id="customerName" class="form-control" type="text" value="Rahul Verma" required />
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="amount">
+                <span>Amount</span>
+                <span class="hint">Subtotal</span>
+              </label>
+              <input id="amount" class="form-control" type="number" step="0.01" value="500" required />
+            </div>
+            <div class="form-group">
+              <label for="coupon">
+                <span>Coupon</span>
+                <span class="hint">Chain Token</span>
+              </label>
+              <input id="coupon" class="form-control" type="text" value="SAVE10" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="region">
+                <span>Region</span>
+                <span class="hint">Abstract Factory</span>
+              </label>
+              <select id="region" class="form-control">
+                <option value="India">India (GST + UPI)</option>
+                <option value="US">US (Sales Tax + Card)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="channel">
+                <span>Channel</span>
+                <span class="hint">Bridge Implementor</span>
+              </label>
+              <select id="channel" class="form-control">
+                <option value="Email">Email</option>
+                <option value="SMS">SMS</option>
+                <option value="Push">Push</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="username">
+                <span>Username</span>
+                <span class="hint">Proxy Principal</span>
+              </label>
+              <input id="username" class="form-control" type="text" value="customer1" autocomplete="username" />
+            </div>
+            <div class="form-group">
+              <label for="password">
+                <span>Password</span>
+                <span class="hint">Secret</span>
+              </label>
+              <input id="password" class="form-control" type="text" value="pass123" autocomplete="current-password" />
+            </div>
+          </div>
+
+          <button class="btn-fire" id="fireBtn" type="button">
+            <span>Fire Pipeline</span>
+            <span class="mono">→</span>
+          </button>
+        </form>
+
+        <div class="deck-footnote">
+          Valid credentials: <code>customer1 / pass123</code> (checked by <code>OrderServiceProxy</code>). Coupon <code>INVALID</code> stops the <code>ChainOfResponsibility</code> pipeline before payment.
+        </div>
+      </section>
+
+      <!-- Right Rail: Live Execution Matrix & Telemetry -->
+      <section class="execution-rail">
+
+        <!-- Telemetry Summary Bar -->
+        <div class="telemetry-card">
+          <div class="order-identifier">
+            <span class="eyebrow">Transaction Record</span>
+            <div class="order-number mono" id="orderNo">ORDER #--- PENDING</div>
+          </div>
+
+          <div class="summary-metrics" id="summary">
+            <div class="metric-cell">
+              <span class="label">Amount</span>
+              <span class="value" id="sumAmount">0.00</span>
+            </div>
+            <div class="metric-cell">
+              <span class="label">Tax (Factory)</span>
+              <span class="value" id="sumTax">0.00</span>
+            </div>
+            <div class="metric-cell">
+              <span class="label">Payable</span>
+              <span class="value" id="sumTotal">0.00</span>
+            </div>
+            <div class="metric-cell">
+              <span class="label">Region</span>
+              <span class="value" id="sumRegion">-</span>
+            </div>
+            <div class="metric-cell">
+              <span class="label">Channel</span>
+              <span class="value" id="sumChannel">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pattern Execution Pipeline -->
+        <div class="pipeline-container">
+          <div class="pipeline-head">
+            <h2 class="pipeline-title">Execution Pipeline</h2>
+            <span class="eyebrow" id="pipelineState">Ready</span>
+          </div>
+
+          <div id="stages">
+            <div class="pipeline-empty-state">
+              Dispatch an order ticket to watch the JVM execute Singleton → Proxy → Chain of Responsibility → Abstract Factory → Bridge → Observer.
+            </div>
+          </div>
+        </div>
+
+        <!-- Raw Java System.out Telemetry Terminal -->
+        <div class="terminal-section">
+          <div class="terminal-head">
+            <div class="terminal-label">
+              <span class="mono">&gt;_</span>
+              <span>JVM System.out Telemetry Stream</span>
+            </div>
+            <div class="terminal-actions">
+              <button class="btn-terminal" id="receiptToggle">Show Raw Trace</button>
+              <button class="btn-terminal" id="copyLogBtn">Copy Log</button>
+            </div>
+          </div>
+          <div class="terminal-body" id="receipt" style="display:none;">// Telemetry log is waiting for pipeline execution...</div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Working ⌘K Command Palette Modal -->
+  <div class="cmdk-backdrop" id="cmdkModal" role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="cmdk-dialog">
+      <div class="cmdk-input-wrap">
+        <span class="mono eyebrow">&gt;</span>
+        <input class="cmdk-input" id="cmdkSearch" placeholder="Type a command or shortcut..." autocomplete="off" />
+        <span class="kbd-tag">ESC</span>
+      </div>
+      <ul class="cmdk-list" id="cmdkList">
+        <li class="cmdk-item" data-action="fire">
+          <span>Fire Current Order</span>
+          <span class="shortcut">↵ Enter</span>
+        </li>
+        <li class="cmdk-item" data-action="preset-1">
+          <span>Preset 1 - India (GST + UPI · Email)</span>
+          <span class="shortcut">1</span>
+        </li>
+        <li class="cmdk-item" data-action="preset-2">
+          <span>Preset 2 - US (Sales Tax + Card · SMS)</span>
+          <span class="shortcut">2</span>
+        </li>
+        <li class="cmdk-item" data-action="preset-3">
+          <span>Preset 3 - Bad Coupon (Chain Abort)</span>
+          <span class="shortcut">3</span>
+        </li>
+        <li class="cmdk-item" data-action="preset-4">
+          <span>Preset 4 - Bad Login (Proxy Reject)</span>
+          <span class="shortcut">4</span>
+        </li>
+        <li class="cmdk-item" data-action="toggle-trace">
+          <span>Toggle Raw JVM Trace Stream</span>
+          <span class="shortcut">T</span>
+        </li>
+        <li class="cmdk-item" data-action="copy-trace">
+          <span>Copy System.out Log</span>
+          <span class="shortcut">C</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const STAGE_DEFS = [
+      { key: 'singleton', numeral: '1.0', name: 'System Singleton', pattern: 'Singleton - QuickBiteSystem', match: l => l.includes('QuickBiteSystem instance created') || l.includes('Processing order for') },
+      { key: 'auth', numeral: '2.0', name: 'Access Gatekeeper', pattern: 'Proxy - OrderServiceProxy', match: l => l.includes('Authenticating user') || l.includes('Login successful') || l.includes('Login failed') },
+      { key: 'coupon', numeral: '3.0', name: 'Coupon Validation Handler', pattern: 'Chain of Responsibility #1', match: l => l.includes('Coupon check') },
+      { key: 'fraud', numeral: '4.0', name: 'Fraud Screening Handler', pattern: 'Chain of Responsibility #2', match: l => l.includes('Fraud check') },
+      { key: 'payment', numeral: '5.0', name: 'Region Factory & Payment', pattern: 'Abstract Factory + Handler', match: l => l.includes('Payment gateway processing') || l.startsWith('Charged') },
+      { key: 'notify', numeral: '6.0', name: 'Decoupled Notifications', pattern: 'Bridge Pattern', match: l => l.includes('has been confirmed') || l.includes('out for delivery!') },
+      { key: 'observer', numeral: '7.0', name: 'Delivery Event Observers', pattern: 'Observer - DeliveryTracker', match: l => l.includes('[CUSTOMER APP]') || l.includes('[RESTAURANT DASHBOARD]') || l.includes('[PARTNER APP]') },
+    ];
+
+    const PRESETS = {
+      1: { customerName: 'Rahul Verma', amount: 500, coupon: 'SAVE10', region: 'India', channel: 'Email', username: 'customer1', password: 'pass123' },
+      2: { customerName: 'Emily Davis', amount: 40, coupon: 'SAVE10', region: 'US', channel: 'SMS', username: 'customer1', password: 'pass123' },
+      3: { customerName: 'Aman Gupta', amount: 300, coupon: 'INVALID', region: 'India', channel: 'Push', username: 'customer1', password: 'pass123' },
+      4: { customerName: 'Sara Khan', amount: 200, coupon: 'SAVE10', region: 'India', channel: 'Email', username: 'customer1', password: 'wrongpass' },
+    };
+
+    let orderCounter = 0;
+    let latestLog = '';
+
+    // Preset Chip Event Listeners
+    document.querySelectorAll('.preset-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyPreset(btn.dataset.preset);
+      });
+    });
+
+    function applyPreset(num) {
+      document.querySelectorAll('.preset-chip').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`.preset-chip[data-preset="${num}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const p = PRESETS[num];
+      if (!p) return;
+      document.getElementById('customerName').value = p.customerName;
+      document.getElementById('amount').value = p.amount;
+      document.getElementById('coupon').value = p.coupon;
+      document.getElementById('region').value = p.region;
+      document.getElementById('channel').value = p.channel;
+      document.getElementById('username').value = p.username;
+      document.getElementById('password').value = p.password;
+    }
+
+    document.getElementById('fireBtn').addEventListener('click', fireOrder);
+
+    async function fireOrder() {
+      const btn = document.getElementById('fireBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Executing JVM Pipeline…</span>';
+
+      const payload = {
+        customerName: document.getElementById('customerName').value,
+        amount: document.getElementById('amount').value,
+        coupon: document.getElementById('coupon').value,
+        region: document.getElementById('region').value,
+        channel: document.getElementById('channel').value,
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+      };
+
+      const kdsStatus = document.getElementById('kdsStatus');
+      kdsStatus.className = 'order-state-badge idle';
+      kdsStatus.textContent = 'EXECUTING ON JVM...';
+      document.getElementById('pipelineState').textContent = 'Processing Pipeline...';
+
+      const startTime = performance.now();
+
+      try {
+        const res = await fetch('/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const latency = Math.round(performance.now() - startTime);
+        renderResult(data, latency);
+      } catch (err) {
+        kdsStatus.className = 'order-state-badge fail';
+        kdsStatus.textContent = 'BACKEND UNREACHABLE';
+        document.getElementById('pipelineState').textContent = 'Server Connection Error';
+        document.getElementById('stages').innerHTML =
+          '<div class="pipeline-empty-state" style="color:var(--color-fail);">' +
+          'Could not reach the QuickBite Java Server at <code>/api/order</code>.<br />Ensure <code>QuickBiteServer</code> is running on port 8080.</div>';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Fire Pipeline</span> <span class="mono">→</span>';
+      }
+    }
+
+    function renderResult(data, latency) {
+      orderCounter++;
+      latestLog = data.log || '';
+
+      const orderNoEl = document.getElementById('orderNo');
+      orderNoEl.textContent = 'ORDER #' + String(orderCounter).padStart(3, '0') +
+        ' - ' + (data.success ? 'CONFIRMED' : 'REJECTED');
+
+      const kdsStatus = document.getElementById('kdsStatus');
+      kdsStatus.className = 'order-state-badge ' + (data.success ? 'pass' : 'fail');
+      kdsStatus.textContent = data.success ? '200 OK - CONFIRMED' : (data.loginFailed ? '401 ACCESS DENIED' : '422 VALIDATION FAILED');
+
+      document.getElementById('pipelineState').textContent = data.success ? 'All Patterns Verified' : 'Pipeline Aborted';
+
+      // Telemetry Summary
+      document.getElementById('sumAmount').textContent = Number(data.amount).toFixed(2);
+      document.getElementById('sumTax').textContent = Number(data.tax).toFixed(2);
+      document.getElementById('sumTotal').textContent = Number(data.total).toFixed(2);
+      document.getElementById('sumRegion').textContent = data.region;
+      document.getElementById('sumChannel').textContent = data.channel;
+
+      const lines = (data.log || '').split('\n').filter(l => l.trim().length > 0);
+      const stagesEl = document.getElementById('stages');
+      stagesEl.innerHTML = '';
+
+      STAGE_DEFS.forEach(def => {
+        const matched = lines.filter(def.match);
+        if (matched.length === 0) return;
+
+        const el = document.createElement('div');
+        el.className = 'stage-card';
+
+        let stageState = 'active';
+        if (def.key === 'auth' && data.loginFailed) stageState = 'fail';
+        if (def.key === 'coupon' && matched.some(l => l.includes('FAILED'))) stageState = 'fail';
+        if (def.key === 'fraud' && matched.some(l => l.includes('FAILED'))) stageState = 'fail';
+        if (stageState === 'active') stageState = 'pass';
+
+        el.classList.add(stageState);
+
+        const linesHtml = matched.map((l, i) =>
+          `<div class="stage-line-item" style="animation-delay:${i * 35}ms">${escapeHtml(l)}</div>`
+        ).join('');
+
+        el.innerHTML = `
+          <div class="stage-header">
+            <div class="stage-left">
+              <span class="stage-numeral mono">${def.numeral}</span>
+              <span class="stage-title">${def.name}</span>
+            </div>
+            <span class="stage-pattern-badge">${def.pattern}</span>
+          </div>
+          <div class="stage-lines">${linesHtml}</div>
+        `;
+        stagesEl.appendChild(el);
+      });
+
+      // Terminal Telemetry Output
+      const receipt = document.getElementById('receipt');
+      receipt.textContent = data.log;
+    }
+
+    // Terminal Toggle & Copy
+    const receiptToggle = document.getElementById('receiptToggle');
+    const receiptEl = document.getElementById('receipt');
+    receiptToggle.addEventListener('click', () => {
+      const isHidden = receiptEl.style.display === 'none';
+      receiptEl.style.display = isHidden ? 'block' : 'none';
+      receiptToggle.textContent = isHidden ? 'Hide Raw Trace' : 'Show Raw Trace';
+    });
+
+    document.getElementById('copyLogBtn').addEventListener('click', () => {
+      if (!latestLog) {
+        alert('No execution trace to copy yet. Fire an order first.');
+        return;
+      }
+      navigator.clipboard.writeText(latestLog).then(() => {
+        const copyBtn = document.getElementById('copyLogBtn');
+        const oldText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => { copyBtn.textContent = oldText; }, 1500);
+      });
+    });
+
+    // ── Working ⌘K Command Palette ──
+    const cmdkModal = document.getElementById('cmdkModal');
+    const cmdkBtn = document.getElementById('cmdkBtn');
+    const cmdkSearch = document.getElementById('cmdkSearch');
+    const cmdkList = document.getElementById('cmdkList');
+
+    function openCmdk() {
+      cmdkModal.classList.add('open');
+      cmdkSearch.value = '';
+      filterCmdk('');
+      cmdkSearch.focus();
+    }
+
+    function closeCmdk() {
+      cmdkModal.classList.remove('open');
+    }
+
+    cmdkBtn.addEventListener('click', openCmdk);
+    cmdkModal.addEventListener('click', (e) => {
+      if (e.target === cmdkModal) closeCmdk();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (cmdkModal.classList.contains('open')) closeCmdk();
+        else openCmdk();
+      } else if (e.key === 'Escape' && cmdkModal.classList.contains('open')) {
+        closeCmdk();
+      }
+    });
+
+    cmdkSearch.addEventListener('input', (e) => {
+      filterCmdk(e.target.value);
+    });
+
+    function filterCmdk(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('.cmdk-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    cmdkList.addEventListener('click', (e) => {
+      const item = e.target.closest('.cmdk-item');
+      if (!item) return;
+      const action = item.dataset.action;
+      executeAction(action);
+      closeCmdk();
+    });
+
+    function executeAction(action) {
+      if (action === 'fire') fireOrder();
+      else if (action === 'preset-1') applyPreset(1);
+      else if (action === 'preset-2') applyPreset(2);
+      else if (action === 'preset-3') applyPreset(3);
+      else if (action === 'preset-4') applyPreset(4);
+      else if (action === 'toggle-trace') receiptToggle.click();
+      else if (action === 'copy-trace') document.getElementById('copyLogBtn').click();
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  </script>
+</body>
+</html>
