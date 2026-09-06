@@ -69,6 +69,16 @@ It's built for anyone who's tired of pattern diagrams that never actually *do* a
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" />
 
+## 📐 UML Class Diagram
+
+<div align="center">
+  <img src="uml_diagram/UML_DIAGRAM.png" width="100%" alt="QuickBite UML Class Diagram" />
+</div>
+
+<p align="center"><sub>Complete UML class diagram illustrating how all 6 GoF design patterns (Singleton, Proxy, Chain of Responsibility, Abstract Factory, Bridge, and Observer) connect and interact across the QuickBite pipeline.</sub></p>
+
+<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" />
+
 ## 🎭 Use Cases
 
 <div align="center">
