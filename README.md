@@ -149,7 +149,7 @@ No frameworks, no build tool, no ORM - just raw Java doing the heavy lifting, wh
 
 <div align="center">
 
-*Built for the Design Pattern Lab* 🧪
+*Built for the Design Pattern Lab*
 
 Made with ❤️ by [yash5123](https://github.com/yash5123)
 
