@@ -151,7 +151,7 @@ No frameworks, no build tool, no ORM - just raw Java doing the heavy lifting, wh
 
 *Built for the Design Pattern Lab*
 
-Made with ❤️ by [yash5123](https://github.com/yash5123)
+Made by [yash5123](https://github.com/yash5123)
 
 </div>
 
