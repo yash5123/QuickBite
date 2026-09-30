@@ -143,7 +143,7 @@ No frameworks, no build tool, no ORM - just raw Java doing the heavy lifting, wh
 > An invalid coupon never even reaches the payment gateway - the Chain of Responsibility halts the entire pipeline one step early.
 
 - 💬 The SQLite driver is force-loaded manually with `Class.forName("org.sqlite.JDBC")` before any connection is opened.
-- 💬 The India and US regions don't just change a number - they swap in a completely different tax calculator *and* a completely different payment processor via the Abstract Factory.
+- 💬 The India and US regions don't just change a number - they swap in a completely different tax calculator and a completely different payment processor via the Abstract Factory.
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" />
 
