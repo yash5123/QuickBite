@@ -65,11 +65,11 @@ Here is the journey of an order flowing through the QuickBite engine:
 ## ✨ Features
 
 <div align="center">
-  <img src="screenshots/stage1-gateway.png" width="48%" alt="Stage 1 Gateway Configuration" style="border: 2px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 6px;" />
-  &nbsp;
-  <img src="screenshots/stage2-fulfillment.png" width="48%" alt="Stage 2 Fulfillment Engine" style="border: 2px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 6px;" />
-  <br/>
-  *<sub>Stage 1: Secure Order Gateway Pipeline &nbsp;|&nbsp; Stage 2: Kitchen Fulfillment & Pricing Engine</sub>*
+  <h3>⚡ Stage 1: Secure Order Gateway & Validation Pipeline</h3>
+  <img src="screenshots/stage1-gateway.png" width="98%" alt="Stage 1 Gateway Configuration" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
+  <br/><br/>
+  <h3>🍳 Stage 2: Kitchen Fulfillment & Pricing Engine</h3>
+  <img src="screenshots/stage2-fulfillment.png" width="98%" alt="Stage 2 Fulfillment Engine" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
 </div>
 
 <br/>
