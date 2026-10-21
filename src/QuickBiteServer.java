@@ -18,10 +18,16 @@ import part9_memento.*;
 
 public class QuickBiteServer {
 
-    private static final int PORT = 8080;
-
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        int port = 8080;
+        String envPort = System.getenv("PORT");
+        if (envPort != null && !envPort.trim().isEmpty()) {
+            try {
+                port = Integer.parseInt(envPort.trim());
+            } catch (NumberFormatException ignored) {}
+        }
+
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new StaticHandler());
         server.createContext("/api/order", new OrderApiHandler());
         server.createContext("/api/stage1", new OrderApiHandler());
@@ -29,7 +35,7 @@ public class QuickBiteServer {
         server.createContext("/api/stage2", new Phase2ApiHandler());
         server.setExecutor(null); // default single-threaded executor
         server.start();
-        System.out.println("QuickBite server running at http://localhost:" + PORT + "/");
+        System.out.println("QuickBite server running at http://localhost:" + port + "/");
         System.out.println("Order Gateway API : POST /api/order (or /api/stage1)");
         System.out.println("Fulfillment & Pricing API : POST /api/stage2 (or /api/phase2)");
     }
