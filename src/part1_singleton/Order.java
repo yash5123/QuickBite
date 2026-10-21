@@ -2,7 +2,6 @@ package part1_singleton;
 
 import part2_abstract_factory.PaymentProcessor;
 
-// P_1
 public class Order {
 
     private String customerName;

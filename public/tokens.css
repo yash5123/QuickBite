@@ -1,0 +1,452 @@
+/**
+ * QuickBite Enterprise Neo-Brutalism Design Tokens & Global Styles
+ * High-contrast, tactile, enterprise-grade architecture workbench.
+ * Locally hosted Google Fonts (Outfit & Plus Jakarta Sans), no harsh black boxes,
+ * and heavy tactile spring physics.
+ */
+
+/* ── Local Font Declarations (Zero Network Delay) ── */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600 800;
+  font-display: swap;
+  src: url('/fonts/Outfit-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/PlusJakartaSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/PlusJakartaSans-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700 800;
+  font-display: swap;
+  src: url('/fonts/PlusJakartaSans-Bold.ttf') format('truetype');
+}
+
+:root {
+  /* ── Canvas & Surface Tokens ── */
+  --ink: #0A0A0A;
+  --paper: #FFFDF7;           /* Clean warm ivory canvas */
+  --surface: #FFFFFF;
+  --surface-alt: #F6EFE2;
+  --surface-well: #F8F5EC;
+  --surface-highlight: #FFFDE7;
+
+  /* ── Vibrant Enterprise Brights ── */
+  --yellow: #FFD60A;
+  --pink: #FF6B9D;
+  --blue: #3B82F6;
+  --green: #10B981;
+  --orange: #FF8A3D;
+  --purple: #8B5CF6;
+  --cyan: #06B6D4;
+  --lime: #84CC16;
+  --red: #EF4444;
+
+  /* ── Borders & Zero-Blur Hard Shadows ── */
+  --border-w: 3px;
+  --border-w-lg: 4px;
+  --border-w-xl: 5px;
+  
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --shadow-md: 6px 6px 0 var(--ink);
+  --shadow-lg: 10px 10px 0 var(--ink);
+  --shadow-hover: 8px 8px 0 var(--ink);
+  --shadow-active: 0 0 0 var(--ink);
+
+  /* Consistent 4px stamped radius */
+  --radius: 4px;
+  --radius-lg: 8px;
+  --radius-pill: 9999px;
+
+  /* ── World-Class Premium Typography ── */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ── Heavy Motion & Spring Physics ── */
+  --spring-stiffness: 420;
+  --spring-damping: 24;
+  --spring-mass: 0.8;
+  --dur-fast: 110ms;
+  --dur-normal: 220ms;
+  --dur-smooth: 360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-normal: 0ms;
+    --dur-smooth: 0ms;
+  }
+}
+
+/* ── Reset & Canvas Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--paper);
+  background-image: 
+    radial-gradient(circle at 1.5px 1.5px, rgba(10, 10, 10, 0.06) 1.5px, transparent 0);
+  background-size: 26px 26px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  letter-spacing: -0.01em;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── Heavy Physical Component Styles ── */
+
+/* Enterprise Cards */
+.brutal-card {
+  background: var(--surface);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  transition: transform var(--dur-fast) cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow var(--dur-fast) cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.brutal-card-lg {
+  border-width: var(--border-w-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.brutal-card-header {
+  border-bottom: var(--border-w) solid var(--ink);
+  padding: 12px 20px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Header Color Variants */
+.header-yellow { background-color: var(--yellow); }
+.header-pink   { background-color: var(--pink); color: #fff; }
+.header-blue   { background-color: var(--blue); color: #fff; }
+.header-green  { background-color: var(--green); color: #fff; }
+.header-orange { background-color: var(--orange); color: #fff; }
+.header-purple { background-color: var(--purple); color: #fff; }
+.header-cyan   { background-color: var(--cyan); }
+.header-surface { background-color: var(--surface-alt); }
+
+/* Interactive Hover Lift */
+.brutal-card-interactive:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Arcade Keypress Button Physics */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 26px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  cursor: pointer;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  background-color: var(--surface);
+  color: var(--ink);
+  min-height: 50px;
+  user-select: none;
+  position: relative;
+  transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.brutal-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.brutal-btn:active,
+.brutal-btn.is-pressed {
+  transform: translate(6px, 6px) !important;
+  box-shadow: 0 0 0 var(--ink) !important;
+}
+
+.brutal-btn:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.brutal-btn:disabled {
+  background-color: #E2E8F0 !important;
+  color: #94A3B8 !important;
+  border-style: dashed;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed;
+}
+
+/* Button Variants */
+.brutal-btn-primary { background-color: var(--yellow); }
+.brutal-btn-secondary { background-color: var(--surface); }
+.brutal-btn-success { background-color: var(--green); color: #fff; }
+.brutal-btn-orange { background-color: var(--orange); color: #fff; }
+.brutal-btn-cyan { background-color: var(--cyan); }
+.brutal-btn-pink { background-color: var(--pink); color: #fff; }
+
+/* Inputs, Textareas, Selects */
+.brutal-input,
+.brutal-select {
+  width: 100%;
+  padding: 13px 16px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background-color: var(--surface);
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  outline: none;
+  transition: background-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.brutal-input:focus,
+.brutal-select:focus {
+  background-color: var(--surface-highlight);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--ink);
+}
+
+.brutal-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #334155;
+  margin-bottom: 7px;
+}
+
+/* Badges & Stickers */
+.brutal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 2px 2px 0 var(--ink);
+  background-color: var(--surface);
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.tilt-left { transform: rotate(-2deg); }
+.tilt-right { transform: rotate(2deg); }
+.tilt-left-subtle { transform: rotate(-1deg); }
+.tilt-right-subtle { transform: rotate(1deg); }
+
+/* Ticker Marquee Ribbon */
+.brutal-marquee-wrap {
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--yellow);
+  border-top: var(--border-w-lg) solid var(--ink);
+  border-bottom: var(--border-w-lg) solid var(--ink);
+  box-shadow: var(--shadow-md);
+  padding: 10px 0;
+  white-space: nowrap;
+  transform: rotate(-1deg) scale(1.01);
+  margin: 18px 0 28px 0;
+  user-select: none;
+}
+
+.brutal-marquee-content {
+  display: inline-flex;
+  align-items: center;
+  animation: marqueeScroll 22s linear infinite;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  gap: 26px;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brutal-marquee-content {
+    animation: none;
+  }
+}
+
+/* ── Clean Light Telemetry Console (Replaces Black Box) ── */
+.brutal-telemetry-console {
+  background: var(--surface);
+  border: var(--border-w-lg) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.brutal-telemetry-header {
+  background: var(--surface-alt);
+  border-bottom: var(--border-w) solid var(--ink);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brutal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.brutal-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.dot-red { background: var(--red); }
+.dot-yellow { background: var(--yellow); }
+.dot-green { background: var(--green); }
+
+.telemetry-stream-body {
+  background: var(--surface-well);
+  padding: 18px;
+  height: 320px;
+  overflow-y: auto;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.telemetry-stream-body::-webkit-scrollbar {
+  width: 8px;
+}
+.telemetry-stream-body::-webkit-scrollbar-track {
+  background: var(--surface-alt);
+}
+.telemetry-stream-body::-webkit-scrollbar-thumb {
+  background: var(--yellow);
+  border: 2px solid var(--ink);
+}
+
+.telemetry-log-item {
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  animation: logSlideIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.telemetry-log-item.log-error {
+  background: #FEF2F2;
+  border-color: var(--red);
+}
+
+.telemetry-log-item.log-success {
+  background: #F0FDF4;
+}
+
+@keyframes logSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Heavy Motion Pipeline Step Pulse ── */
+.stage-card.is-active-step {
+  border-color: var(--ink);
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 0 0 3px var(--yellow), var(--shadow-lg) !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stage-card.is-success-step {
+  background: #F0FDF4;
+  border-color: var(--green);
+}
+
+/* Canvas Layer */
+#generativeBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}

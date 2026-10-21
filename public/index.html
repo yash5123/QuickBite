@@ -3,1320 +3,1339 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuickBite - Design Pattern Pipeline Workbench</title>
+  <title>QuickBite · Enterprise Architecture Workbench</title>
+  
+  <!-- Premium Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="tokens.css" />
   <style>
-    /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5
-     * genre: modern-minimal · macrostructure: Workbench · theme: Cobalt
-     * anti-patterns avoided: no purple gradients, no fake browser chrome, no generic pills,
-     * no invented stats, strictly locked OKLCH tokens, 100% responsive down to 320px.
-     */
-
-    :root {
-      --color-paper: oklch(98.5% 0.004 250);
-      --color-paper-2: oklch(96.2% 0.006 250);
-      --color-paper-3: oklch(93.5% 0.009 250);
-      --color-ink: oklch(22% 0.022 258);
-      --color-ink-2: oklch(38% 0.020 258);
-      --color-muted: oklch(56% 0.015 258);
-      --color-rule: oklch(89% 0.008 250);
-      --color-rule-dark: oklch(80% 0.012 250);
-      --color-accent: oklch(58% 0.20 256); /* Electric Cobalt signal */
-      --color-accent-hover: oklch(52% 0.22 256);
-      --color-accent-ink: oklch(98.5% 0.004 250);
-      --color-focus: oklch(58% 0.20 256);
-      --color-pass: oklch(62% 0.17 145);
-      --color-pass-surface: oklch(97% 0.03 145);
-      --color-fail: oklch(56% 0.22 25);
-      --color-fail-surface: oklch(96% 0.03 25);
-      --color-graphite: oklch(19% 0.016 260);
-      --color-graphite-surface: oklch(24% 0.018 260);
-      --color-graphite-rule: oklch(32% 0.018 260);
-
-      --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-
-      --space-3xs: 0.25rem;
-      --space-2xs: 0.5rem;
-      --space-xs: 0.75rem;
-      --space-sm: 1rem;
-      --space-md: 1.5rem;
-      --space-lg: 2rem;
-      --space-xl: 3rem;
-
-      --radius-sm: 4px;
-      --radius-md: 6px;
-      --radius-lg: 8px;
-      --radius-code: 10px;
-
-      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-      --dur-short: 180ms;
+    /* ── Layout & Visual Differentiation ── */
+    .app-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 28px 80px 28px;
+      position: relative;
+      z-index: 1;
     }
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    /* Section Separators */
+    .section-wrapper {
+      margin-top: 36px;
     }
 
-    html, body {
-      background-color: var(--color-paper);
-      color: var(--color-ink);
-      font-family: var(--font-body);
-      font-size: 14.5px;
-      line-height: 1.55;
-      overflow-x: clip;
-      -webkit-font-smoothing: antialiased;
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
 
-    ::selection {
-      background-color: var(--color-accent);
-      color: var(--color-accent-ink);
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    /* ── Utilities ── */
-    .mono {
+    .section-num-tag {
+      background: var(--yellow);
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      padding: 4px 10px;
       font-family: var(--font-mono);
-      font-feature-settings: 'zero' 1;
+      font-size: 0.82rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0 var(--ink);
     }
 
-    .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--color-accent);
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
     }
 
-    /* ── Top Bar / Nav (N2 Bordered Workbench) ── */
-    header.topbar {
-      border-bottom: 1px solid var(--color-rule);
-      background-color: var(--color-paper);
+    /* Top Navigation Bar */
+    .brutal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      background: var(--surface);
+      border: var(--border-w-lg) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
       position: sticky;
-      top: 0;
+      top: 16px;
       z-index: 100;
     }
 
-    .topbar-inner {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0.75rem 1.5rem;
+    .brand-mark {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--ink);
     }
 
-    .brand-cluster {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-title {
+    .brand-box {
+      background: var(--yellow);
+      border: var(--border-w) solid var(--ink);
+      padding: 6px 16px;
       font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.03em;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-subtitle {
+      font-family: var(--font-body);
+      font-size: 0.88rem;
       font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
-      color: var(--color-ink);
+      letter-spacing: 0.04em;
+      color: #334155;
+    }
+
+    /* Stage Navigation Tabs */
+    .nav-tabs {
       display: flex;
-      align-items: center;
-      gap: 0.35rem;
+      gap: 10px;
+      background: var(--surface-alt);
+      padding: 6px;
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
     }
 
-    .brand-badge {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border: 1px solid var(--color-rule-dark);
-      border-radius: var(--radius-sm);
-      color: var(--color-ink-2);
-      background-color: var(--color-paper-2);
-    }
-
-    .pattern-roster {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-
-    .pattern-pill {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--color-muted);
-      border: 1px solid var(--color-rule);
-      padding: 2px 6px;
-      border-radius: var(--radius-sm);
-      background-color: var(--color-paper);
-    }
-
-    .pattern-pill strong {
-      color: var(--color-ink-2);
-      font-weight: 600;
-    }
-
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .status-beacon {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--color-pass);
-      background-color: var(--color-pass-surface);
-      border: 1px solid oklch(85% 0.08 145);
-      padding: 3px 8px;
-      border-radius: var(--radius-sm);
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: var(--color-pass);
-      box-shadow: 0 0 0 2px oklch(62% 0.17 145 / 0.25);
-    }
-
-    .cmdk-trigger {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background-color: var(--color-paper-2);
-      border: 1px solid var(--color-rule);
-      padding: 5px 10px;
-      border-radius: var(--radius-md);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--color-ink-2);
-      cursor: pointer;
-      transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
-    }
-
-    .cmdk-trigger:hover {
-      border-color: var(--color-accent);
-      background-color: var(--color-paper-3);
-    }
-
-    .kbd-tag {
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule-dark);
-      border-radius: 3px;
-      padding: 1px 4px;
-      font-size: 10px;
-    }
-
-    /* ── Main Canvas (Workbench Shell) ── */
-    main.workbench {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
-    }
-
-    /* ── Hero / Intro Strip ── */
-    .hero-strip {
-      border-bottom: 1px solid var(--color-rule);
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .hero-strip h1 {
+    .tab-btn {
+      padding: 11px 24px;
       font-family: var(--font-display);
-      font-size: clamp(1.85rem, 3.5vw, 2.5rem);
-      font-weight: 700;
-      letter-spacing: -0.035em;
-      line-height: 1.1;
-      color: var(--color-ink);
-      margin-top: 0.35rem;
-    }
-
-    .hero-strip p {
-      font-size: 14px;
-      color: var(--color-ink-2);
-      max-width: 65ch;
-      margin-top: 0.4rem;
-    }
-
-    /* ── Presets Ribbon ── */
-    .presets-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .presets-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--color-muted);
+      font-size: 0.96rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-right: 0.25rem;
-    }
-
-    .preset-chip {
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      font-weight: 500;
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule);
-      color: var(--color-ink-2);
-      padding: 6px 11px;
-      border-radius: var(--radius-md);
+      letter-spacing: 0.03em;
+      border: var(--border-w) solid transparent;
+      border-radius: var(--radius);
+      background: transparent;
       cursor: pointer;
-      display: inline-flex;
+      color: var(--ink);
+      transition: all var(--dur-fast) ease;
+    }
+
+    .tab-btn:hover {
+      background: #FFFFFF;
+      border-color: var(--ink);
+      transform: translate(-2px, -2px);
+    }
+
+    .tab-btn.active {
+      background: var(--yellow);
+      border-color: var(--ink);
+      box-shadow: var(--shadow-sm);
+      transform: translate(-2px, -2px);
+    }
+
+    .tab-btn.active-stage2 {
+      background: var(--orange);
+      color: #FFFFFF;
+    }
+
+    /* Hero Section */
+    .hero-container {
+      margin-top: 24px;
+      position: relative;
+      background: var(--surface);
+      border: var(--border-w-lg) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 44px 40px;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 960px;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      background: var(--cyan);
+      border: var(--border-w) solid var(--ink);
+      padding: 5px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.4vw, 4rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .hero-title-highlight {
+      background: var(--yellow);
+      padding: 0 8px;
+      border: var(--border-w) solid var(--ink);
+      display: inline-block;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .hero-description {
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      font-weight: 500;
+      line-height: 1.72;
+      letter-spacing: -0.012em;
+      color: #1E293B;
+      max-width: 860px;
+      margin-bottom: 28px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Scenario Bar (Presets) */
+    .scenarios-container {
+      background: var(--surface);
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 16px 24px;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      transition: all var(--dur-short) var(--ease-out);
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    .preset-chip:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-      background-color: var(--color-paper-2);
+    .scenarios-label {
+      font-family: var(--font-display);
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #0F172A;
+      margin-right: 8px;
     }
 
-    .preset-chip.active {
-      border-color: var(--color-accent);
-      background-color: var(--color-paper-2);
-      color: var(--color-accent);
-      font-weight: 600;
+    .scenario-btn {
+      background: var(--surface-alt);
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      padding: 9px 18px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      color: var(--ink);
+      transition: all var(--dur-fast) ease;
     }
 
-    /* ── Workbench Split Grid ── */
-    .workbench-grid {
+    .scenario-btn:hover {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    /* Spacious Configuration Panel */
+    .config-card {
+      background: var(--surface);
+      border: var(--border-w-lg) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .config-header {
+      background: var(--yellow);
+      border-bottom: var(--border-w) solid var(--ink);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .config-header-stage2 {
+      background: var(--orange);
+      color: #FFFFFF;
+    }
+
+    .config-header-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .config-body {
+      padding: 32px 36px;
+    }
+
+    /* Multi-section spacious grid for Configuration */
+    .config-sections-grid {
       display: grid;
-      grid-template-columns: 470px minmax(0, 1fr);
-      gap: 1.75rem;
-      align-items: start;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-bottom: 32px;
     }
 
-    @media (max-width: 1080px) {
-      .workbench-grid {
+    @media (max-width: 1024px) {
+      .config-sections-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
       }
     }
 
-    /* ── Left Rail: Order Ticket Console ── */
-    .control-deck {
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      position: sticky;
-      top: 4.5rem;
+    .config-sub-box {
+      background: var(--surface-well);
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .deck-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--color-rule);
-      margin-bottom: 1.25rem;
-    }
-
-    .deck-title {
+    .config-sub-heading {
       font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.5rem;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--color-ink-2);
-      margin-bottom: 0.35rem;
-      letter-spacing: 0.02em;
-    }
-
-    .form-group label span.hint {
-      font-weight: 400;
-      color: var(--color-muted);
-      font-size: 10.5px;
-      white-space: nowrap;
-    }
-
-    .form-control {
-      width: 100%;
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule);
-      border-radius: var(--radius-md);
-      padding: 8px 10px;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--color-ink);
-      transition: border-color var(--dur-short) var(--ease-out), outline var(--dur-short) var(--ease-out);
-    }
-
-    .form-control:focus {
-      outline: 2px solid var(--color-focus);
-      outline-offset: -1px;
-      border-color: var(--color-accent);
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .btn-fire {
-      width: 100%;
-      background-color: var(--color-accent);
-      color: var(--color-accent-ink);
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 10px 14px;
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
-    }
-
-    .btn-fire:hover {
-      background-color: var(--color-accent-hover);
-    }
-
-    .btn-fire:active {
-      transform: translateY(1px);
-    }
-
-    .btn-fire:disabled {
-      opacity: 0.65;
-      cursor: wait;
-    }
-
-    .deck-footnote {
-      margin-top: 1rem;
-      padding-top: 0.85rem;
-      border-top: 1px dashed var(--color-rule);
-      font-size: 11.5px;
-      color: var(--color-muted);
-      line-height: 1.45;
-    }
-
-    .deck-footnote code {
-      font-family: var(--font-mono);
-      background-color: var(--color-paper-2);
-      padding: 1px 4px;
-      border-radius: 3px;
-      color: var(--color-ink-2);
-      border: 1px solid var(--color-rule);
-    }
-
-    /* ── Right Rail: Live Execution Matrix ── */
-    .execution-rail {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    /* ── Metric Telemetry Bar ── */
-    .telemetry-card {
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .order-identifier {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .order-number {
-      font-family: var(--font-display);
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .order-state-badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      width: fit-content;
-      padding: 2px 8px;
-      border-radius: var(--radius-sm);
-    }
-
-    .order-state-badge.idle {
-      background-color: var(--color-paper-2);
-      color: var(--color-muted);
-      border: 1px solid var(--color-rule);
-    }
-
-    .order-state-badge.pass {
-      background-color: var(--color-pass-surface);
-      color: var(--color-pass);
-      border: 1px solid oklch(85% 0.08 145);
-    }
-
-    .order-state-badge.fail {
-      background-color: var(--color-fail-surface);
-      color: var(--color-fail);
-      border: 1px solid oklch(85% 0.10 25);
-    }
-
-    .summary-metrics {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-    }
-
-    .metric-cell {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .metric-cell .label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 800;
       text-transform: uppercase;
-      color: var(--color-muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--ink);
+      color: #0F172A;
     }
 
-    .metric-cell .value {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-ink);
+    .form-field {
+      margin-bottom: 16px;
     }
 
-    /* ── Pattern Pipeline Stages ── */
-    .pipeline-container {
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
+    .form-field:last-child {
+      margin-bottom: 0;
     }
 
-    .pipeline-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--color-rule);
-      padding-bottom: 0.75rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .pipeline-title {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    .pipeline-empty-state {
-      padding: 3rem 1rem;
-      text-align: center;
-      color: var(--color-muted);
-      font-family: var(--font-mono);
-      font-size: 13px;
+    /* Pipeline Cards Grid */
+    .stages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 22px;
     }
 
     .stage-card {
-      border: 1px solid var(--color-rule);
-      border-left: 3px solid var(--color-rule);
-      background-color: var(--color-paper);
-      border-radius: var(--radius-md);
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
-      transition: all var(--dur-short) var(--ease-out);
+      background: var(--surface);
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
     }
 
-    .stage-card.active {
-      border-left-color: var(--color-accent);
-      background-color: var(--color-paper-2);
+    .stage-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-hover);
     }
 
-    .stage-card.pass {
-      border-left-color: var(--color-pass);
-      background-color: var(--color-paper);
+    .stage-card-body {
+      padding: 20px 22px;
     }
 
-    .stage-card.fail {
-      border-left-color: var(--color-fail);
-      background-color: var(--color-fail-surface);
-    }
-
-    .stage-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .stage-left {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
-    .stage-numeral {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--color-muted);
-    }
-
-    .stage-title {
+    .stage-card-title {
       font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--color-ink);
+      font-size: 1.32rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+      color: var(--ink);
     }
 
-    .stage-pattern-badge {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border: 1px solid var(--color-rule-dark);
-      border-radius: var(--radius-sm);
-      color: var(--color-ink-2);
-      background-color: var(--color-paper-2);
-    }
-
-    .stage-lines {
-      margin-top: 0.65rem;
-      padding-top: 0.5rem;
-      border-top: 1px dashed var(--color-rule);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      line-height: 1.6;
-      color: var(--color-ink-2);
-    }
-
-    .stage-line-item {
-      opacity: 0;
-      transform: translateY(2px);
-      animation: lineIn 160ms var(--ease-out) forwards;
-    }
-
-    @keyframes lineIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* ── Graphite Terminal Section (Signature Dark Beat) ── */
-    .terminal-section {
-      background-color: var(--color-graphite);
-      color: oklch(90% 0.01 250);
-      border: 1px solid var(--color-graphite-rule);
-      border-radius: var(--radius-code);
-      overflow: hidden;
-    }
-
-    .terminal-head {
-      background-color: var(--color-graphite-surface);
-      border-bottom: 1px solid var(--color-graphite-rule);
-      padding: 0.65rem 1rem;
+    .stage-card-meta {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
     }
 
-    .terminal-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
+    .stage-desc-well {
+      background: var(--surface-well);
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
       font-weight: 500;
-      color: oklch(75% 0.015 250);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      line-height: 1.62;
+      letter-spacing: -0.01em;
+      min-height: 72px;
+      color: #0F172A;
     }
 
-    .terminal-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .btn-terminal {
-      background: transparent;
-      border: 1px solid var(--color-graphite-rule);
-      color: oklch(80% 0.01 250);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all var(--dur-short) var(--ease-out);
-    }
-
-    .btn-terminal:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent-ink);
-      background-color: var(--color-accent);
-    }
-
-    .terminal-body {
-      padding: 1rem 1.25rem;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      line-height: 1.65;
-      max-height: 280px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      color: oklch(88% 0.02 145);
-    }
-
-    /* ── Working ⌘K Command Palette (Modal) ── */
-    .cmdk-backdrop {
-      position: fixed;
-      inset: 0;
-      background-color: oklch(0% 0 0 / 0.45);
-      backdrop-filter: blur(2px);
-      z-index: 1000;
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 15vh;
-    }
-
-    .cmdk-backdrop.open {
-      display: flex;
-    }
-
-    .cmdk-dialog {
-      width: 100%;
-      max-width: 540px;
-      background-color: var(--color-paper);
-      border: 1px solid var(--color-rule-dark);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 20px 45px -10px oklch(0% 0 0 / 0.25);
+    /* Clean Light Telemetry Console (NO BLACK BOX) */
+    .telemetry-container {
+      background: var(--surface);
+      border: var(--border-w-lg) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
-      animation: dialogIn 150ms var(--ease-out) forwards;
     }
 
-    @keyframes dialogIn {
-      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .cmdk-input-wrap {
-      border-bottom: 1px solid var(--color-rule);
-      padding: 0.85rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .cmdk-input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-family: var(--font-mono);
-      font-size: 13.5px;
-      color: var(--color-ink);
-    }
-
-    .cmdk-list {
-      padding: 0.5rem;
-      max-height: 320px;
-      overflow-y: auto;
-      list-style: none;
-    }
-
-    .cmdk-item {
-      padding: 8px 10px;
-      border-radius: var(--radius-md);
-      font-family: var(--font-mono);
-      font-size: 12px;
+    .telemetry-header {
+      background: var(--surface-alt);
+      border-bottom: var(--border-w) solid var(--ink);
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: var(--color-ink);
-      cursor: pointer;
-      transition: background-color var(--dur-short) var(--ease-out);
     }
 
-    .cmdk-item:hover, .cmdk-item.selected {
-      background-color: var(--color-paper-2);
-      color: var(--color-accent);
+    .telemetry-stream-body {
+      background: #FCFBF7;
+      padding: 20px 24px;
+      height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .cmdk-item span.shortcut {
-      color: var(--color-muted);
-      font-size: 10.5px;
+    .telemetry-log-item {
+      padding: 11px 18px;
+      background: #FFFFFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: 2px 2px 0 var(--ink);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: #0F172A;
+      line-height: 1.55;
     }
 
-    /* ── Responsive adjustments ── */
-    @media (max-width: 640px) {
-      .topbar-inner {
-        padding: 0.65rem 1rem;
+    .log-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border: 1.5px solid var(--ink);
+      border-radius: var(--radius);
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .log-badge-auth { background: var(--pink); color: #fff; }
+    .log-badge-pipeline { background: var(--yellow); color: var(--ink); }
+    .log-badge-gateway { background: var(--cyan); color: var(--ink); }
+    .log-badge-fulfillment { background: var(--blue); color: #fff; }
+    .log-badge-success { background: var(--green); color: #fff; }
+    .log-badge-error { background: var(--red); color: #fff; }
+
+    /* Performance Analytics Deck */
+    .analytics-deck {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .analytics-deck {
+        grid-template-columns: 1fr 1fr;
       }
-      main.workbench {
-        padding: 1.25rem 1rem 3rem;
-      }
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-      .summary-metrics {
-        width: 100%;
-        justify-content: space-between;
-        margin-top: 0.5rem;
-        padding-top: 0.5rem;
-        border-top: 1px solid var(--color-rule);
-      }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-val {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #475569;
+    }
+
+    /* Light Clean Footer (NO BLACK BOX) */
+    .clean-footer {
+      background: var(--surface);
+      border: var(--border-w-lg) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 32px 36px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .footer-brand-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--ink);
     }
   </style>
 </head>
 <body>
+  <div class="app-container">
 
-  <!-- Top Navigation / Status Header -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand-cluster">
-        <span class="brand-title">QuickBite</span>
-        <span class="brand-badge">// GOF RUNTIME</span>
-      </div>
-
-      <div class="pattern-roster">
-        <span class="pattern-pill"><strong>[1]</strong> Singleton</span>
-        <span class="pattern-pill"><strong>[2]</strong> Proxy</span>
-        <span class="pattern-pill"><strong>[3]</strong> Chain</span>
-        <span class="pattern-pill"><strong>[4]</strong> Abstract Factory</span>
-        <span class="pattern-pill"><strong>[5]</strong> Bridge</span>
-        <span class="pattern-pill"><strong>[6]</strong> Observer</span>
-      </div>
-
-      <div class="topbar-actions">
-        <div class="status-beacon">
-          <span class="status-dot"></span>
-          <span>JVM :8080 ONLINE</span>
+    <!-- Top Navigation Bar -->
+    <header class="brutal-nav">
+      <a href="#" class="brand-mark" aria-label="QuickBite Architecture Workbench">
+        <div class="brand-box">QUICKBITE</div>
+        <div class="brand-subtitle">
+          ENTERPRISE ARCHITECTURE WORKBENCH
         </div>
-        <button class="cmdk-trigger" id="cmdkBtn" title="Press ⌘K or Ctrl+K to open commands">
-          <span>Palette</span>
-          <span class="kbd-tag">⌘K</span>
+      </a>
+
+      <!-- Stage Selector Tabs -->
+      <nav class="nav-tabs" role="tablist" aria-label="Pipeline Stages">
+        <button id="tabStage1" class="tab-btn active" role="tab" aria-selected="true" onclick="switchStage(1)">
+          Stage 1: Order Gateway
+        </button>
+        <button id="tabStage2" class="tab-btn" role="tab" aria-selected="false" onclick="switchStage(2)">
+          Stage 2: Fulfillment & Pricing
+        </button>
+      </nav>
+
+    </header>
+
+    <!-- Ticker Ribbon -->
+    <div class="brutal-marquee-wrap" aria-hidden="true">
+      <div class="brutal-marquee-content">
+        <span>DISTRIBUTED ARCHITECTURE PIPELINE</span>
+        <span>·</span>
+        <span>11 GANG OF FOUR ARCHITECTURAL PATTERNS</span>
+        <span>·</span>
+        <span>STAGE 1: SINGLETON · PROXY · CHAIN OF RESPONSIBILITY · ABSTRACT FACTORY · BRIDGE · OBSERVER</span>
+        <span>·</span>
+        <span>STAGE 2: BUILDER · PROTOTYPE · TEMPLATE METHOD · STRATEGY · MEMENTO</span>
+        <span>·</span>
+        <span>REAL-TIME TELEMETRY STREAM</span>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="heroSection" class="hero-container">
+      <canvas id="generativeBg"></canvas>
+
+      <div class="hero-content">
+        <div class="hero-kicker">
+          PRODUCTION ARCHITECTURE BENCHMARK
+        </div>
+        <h1 class="hero-title">
+          11 ENTERPRISE PATTERNS.<br />
+          <span class="hero-title-highlight">VERIFIED PIPELINE EXECUTION.</span>
+        </h1>
+        <p class="hero-description">
+          A high-performance order management and fulfillment pipeline engineered strictly with Gang of Four 
+          creational, structural, and behavioral architectural patterns. Featuring cryptographic role verification, 
+          multi-regional tax calculation, parametric meal assembly, dynamic pricing strategies, and state snapshot time-travel.
+        </p>
+
+        <div class="hero-tags">
+          <span class="brutal-badge" style="background: var(--yellow);">
+            STAGE 1: ORDER GATEWAY PIPELINE
+          </span>
+          <span class="brutal-badge" style="background: var(--green); color: #fff;">
+            STAGE 2: FULFILLMENT & PRICING ENGINE
+          </span>
+          <span class="brutal-badge" style="background: var(--cyan);">
+            PHYSICAL MOTION PHYSICS
+          </span>
+          <span class="brutal-badge" style="background: var(--surface-alt);">
+            SQLITE AUDIT PERSISTENCE
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 1: Quick Verification Scenarios -->
+    <div class="section-wrapper">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <span class="section-num-tag">PART 1</span>
+          <h2 class="section-heading">Quick Verification Scenarios</h2>
+        </div>
+        <span class="brutal-badge" style="background: #fff;">ONE-CLICK PRESETS</span>
+      </div>
+
+      <div class="scenarios-container">
+        <span class="scenarios-label">SELECT SCENARIO:</span>
+        <button class="scenario-btn" onclick="applyPreset(1)">
+          [Scenario 1: India Express UPI]
+        </button>
+        <button class="scenario-btn" onclick="applyPreset(2)">
+          [Scenario 2: US Global Credit Card]
+        </button>
+        <button class="scenario-btn" onclick="applyPreset(3)">
+          [Scenario 3: Invalid Coupon Gate]
+        </button>
+        <button class="scenario-btn" onclick="applyPreset(4)">
+          [Scenario 4: Proxy Authentication Failure]
+        </button>
+        <button class="scenario-btn" onclick="applyPreset(5)">
+          [Scenario 5: Stage 2 Burger Box & Loyalty]
         </button>
       </div>
     </div>
-  </header>
 
-  <!-- Main Workbench Viewport -->
-  <main class="workbench">
-
-    <!-- Hero Introduction -->
-    <section class="hero-strip">
-      <div>
-        <div class="eyebrow">// Live Order Processing Pipeline</div>
-        <h1>Design Pattern Pipeline Workbench</h1>
-        <p>Direct architectural execution through Java's Singleton, Proxy, Chain of Responsibility, Abstract Factory, Bridge, and Observer classes. All stages are executed natively on the JVM backend with zero mock data.</p>
+    <!-- Part 2: Spacious Order Configuration Panel -->
+    <div class="section-wrapper">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <span class="section-num-tag">PART 2</span>
+          <h2 class="section-heading" id="configHeading">Order & Gateway Configuration</h2>
+        </div>
+        <span id="configStageBadge" class="brutal-badge" style="background: #fff;">GATEWAY ACTIVE</span>
       </div>
-      <div>
-        <!-- Order status indicator in top hero -->
-        <div class="order-state-badge idle" id="kdsStatus">WAITING FOR TICKET DISPATCH</div>
-      </div>
-    </section>
 
-    <!-- Preset Scenario Selector -->
-    <section class="presets-bar">
-      <span class="presets-label">Presets:</span>
-      <button class="preset-chip active" data-preset="1" id="preset1">
-        <span>01 · India (GST + UPI · Email)</span>
-      </button>
-      <button class="preset-chip" data-preset="2" id="preset2">
-        <span>02 · US (Sales Tax + Card · SMS)</span>
-      </button>
-      <button class="preset-chip" data-preset="3" id="preset3">
-        <span>03 · Bad Coupon (Chain Abort)</span>
-      </button>
-      <button class="preset-chip" data-preset="4" id="preset4">
-        <span>04 · Bad Login (Proxy Gate)</span>
-      </button>
-    </section>
-
-    <!-- Two-Column Workbench Layout -->
-    <div class="workbench-grid">
-
-      <!-- Left Rail: Order Ticket Console -->
-      <section class="control-deck">
-        <div class="deck-head">
-          <h2 class="deck-title">Order Manifest</h2>
-          <span class="eyebrow">Input Payload</span>
+      <div class="config-card">
+        <div id="configHeader" class="config-header">
+          <span id="configHeaderTitle" class="config-header-title">ORDER GATEWAY PARAMETERS</span>
+          <span id="configHeaderSubtitle" class="brutal-badge" style="background: #fff;">ACTIVE CONFIGURATION</span>
         </div>
 
-        <form id="orderForm" onsubmit="return false;">
-          <div class="form-group">
-            <label for="customerName">
-              <span>Customer Name</span>
-              <span class="hint">Entity Identity</span>
-            </label>
-            <input id="customerName" class="form-control" type="text" value="Rahul Verma" required />
+        <div class="config-body">
+
+          <!-- STAGE 1 CONFIGURATION FORM -->
+          <div id="stage1ConfigForm">
+            <div class="config-sections-grid">
+              
+              <!-- Sub-Box 1: Order Details -->
+              <div class="config-sub-box">
+                <div class="config-sub-heading">1. Customer & Order</div>
+                <div class="form-field">
+                  <label class="brutal-label" for="customerName">Customer Name</label>
+                  <input id="customerName" class="brutal-input" type="text" value="Aarav Sharma" />
+                </div>
+                <div class="form-field">
+                  <label class="brutal-label" for="amount">Order Amount (INR / USD)</label>
+                  <input id="amount" class="brutal-input" type="number" value="1200" step="50" />
+                </div>
+                <div class="form-field">
+                  <label class="brutal-label" for="coupon">Coupon Code (Chain Validation)</label>
+                  <input id="coupon" class="brutal-input" type="text" value="SAVE10" placeholder="e.g. SAVE10" />
+                </div>
+              </div>
+
+              <!-- Sub-Box 2: Regional Gateways -->
+              <div class="config-sub-box">
+                <div class="config-sub-heading">2. Gateway & Routing</div>
+                <div class="form-field">
+                  <label class="brutal-label" for="region">Tax Region (Abstract Factory)</label>
+                  <select id="region" class="brutal-select">
+                    <option value="IN" selected>India (GST 5% + Cess Calculator)</option>
+                    <option value="US">US (State Tax 8.25% Calculator)</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="brutal-label" for="channel">Dispatch Channel (Bridge)</label>
+                  <select id="channel" class="brutal-select">
+                    <option value="PUSH" selected>Push Notification Channel</option>
+                    <option value="SMS">SMS Gateway Channel</option>
+                    <option value="EMAIL">Email Dispatch Channel</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Sub-Box 3: Security & Access -->
+              <div class="config-sub-box">
+                <div class="config-sub-heading">3. Security & Access</div>
+                <div class="form-field">
+                  <label class="brutal-label" for="username">Proxy Username</label>
+                  <input id="username" class="brutal-input" type="text" value="customer1" />
+                </div>
+                <div class="form-field">
+                  <label class="brutal-label" for="password">Proxy Password</label>
+                  <input id="password" class="brutal-input" type="password" value="pass123" />
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Prominent Physical Button -->
+            <button id="btnExecute1" class="brutal-btn brutal-btn-primary" style="width: 100%; font-size: 1.15rem; min-height: 56px;" onclick="runStage1Pipeline()">
+              EXECUTE ORDER GATEWAY PIPELINE
+            </button>
           </div>
 
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="amount">
-                <span>Amount</span>
-                <span class="hint">Subtotal</span>
-              </label>
-              <input id="amount" class="form-control" type="number" step="0.01" value="500" required />
+          <!-- STAGE 2 CONFIGURATION FORM -->
+          <div id="stage2ConfigForm" style="display: none;">
+            <div class="config-sections-grid">
+              
+              <!-- Sub-Box 1: Meal Builder & Prototype -->
+              <div class="config-sub-box">
+                <div class="config-sub-heading">1. Meal Builder & Prototype</div>
+                <div class="form-field">
+                  <label class="brutal-label" for="mealPreset">Meal Prototype Archetype</label>
+                  <select id="mealPreset" class="brutal-select">
+                    <option value="Gourmet Burger Box" selected>Gourmet Burger Box (Builder + Fries + Truffle Dip)</option>
+                    <option value="Woodfired Pizza Feast">Woodfired Pizza Feast (Builder + Garlic Bread + Mint Mojito)</option>
+                    <option value="Executive Lunchbox">Executive Lunchbox (Healthy Grain Bowl + Cold Pressed Juice)</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="brutal-label" for="quantity">Quantity (Clone Multiplier)</label>
+                  <input id="quantity" class="brutal-input" type="number" value="2" min="1" max="10" />
+                </div>
+              </div>
+
+              <!-- Sub-Box 2: Fulfillment & Strategy -->
+              <div class="config-sub-box">
+                <div class="config-sub-heading">2. Fulfillment & Strategy</div>
+                <div class="form-field">
+                  <label class="brutal-label" for="fulfillmentType">Fulfillment Workflow (Template Method)</label>
+                  <select id="fulfillmentType" class="brutal-select">
+                    <option value="DELIVERY" selected>Home Delivery (Thermal Insulated Seal + Live GPS)</option>
+                    <option value="TAKEAWAY">Express Takeaway (Thermal Wrap + Counter Pick)</option>
+                    <option value="DINE_IN">Table Dine-In (Table Reservation + Waiter Service)</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label class="brutal-label" for="discountType">Pricing Algorithm (Strategy)</label>
+                  <select id="discountType" class="brutal-select">
+                    <option value="LOYALTY" selected>VIP Gold Member Tier (25% OFF)</option>
+                    <option value="PERCENTAGE">Seasonal Promotion (15% OFF)</option>
+                    <option value="FLAT">Flat Voucher Discount (Rs. 100 OFF)</option>
+                    <option value="NONE">Standard Menu Pricing (0% OFF)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Sub-Box 3: Memento State Controls -->
+              <div class="config-sub-box">
+                <div class="config-sub-heading">3. Memento State Snapshots</div>
+                <div class="form-field">
+                  <label class="brutal-label" for="cartAction">Cart Snapshot Action</label>
+                  <select id="cartAction" class="brutal-select">
+                    <option value="ADD" selected>Commit Item to Cart (Save Snapshot)</option>
+                    <option value="UPDATE">Update Item Parameters</option>
+                  </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 18px;">
+                  <button type="button" class="brutal-btn brutal-btn-secondary" style="flex: 1;" onclick="undoCart()">
+                    UNDO (MEMENTO)
+                  </button>
+                  <button type="button" class="brutal-btn brutal-btn-secondary" style="flex: 1;" onclick="redoCart()">
+                    REDO (MEMENTO)
+                  </button>
+                </div>
+              </div>
+
             </div>
-            <div class="form-group">
-              <label for="coupon">
-                <span>Coupon</span>
-                <span class="hint">Chain Token</span>
-              </label>
-              <input id="coupon" class="form-control" type="text" value="SAVE10" />
-            </div>
+
+            <!-- Prominent Physical Button -->
+            <button id="btnExecute2" class="brutal-btn brutal-btn-orange" style="width: 100%; font-size: 1.15rem; min-height: 56px;" onclick="runStage2Pipeline()">
+              EXECUTE KITCHEN FULFILLMENT ENGINE
+            </button>
           </div>
 
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="region">
-                <span>Region</span>
-                <span class="hint">Abstract Factory</span>
-              </label>
-              <select id="region" class="form-control">
-                <option value="India">India (GST + UPI)</option>
-                <option value="US">US (Sales Tax + Card)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="channel">
-                <span>Channel</span>
-                <span class="hint">Bridge Implementor</span>
-              </label>
-              <select id="channel" class="form-control">
-                <option value="Email">Email</option>
-                <option value="SMS">SMS</option>
-                <option value="Push">Push</option>
-              </select>
-            </div>
-          </div>
+        </div>
+      </div>
+    </div>
 
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="username">
-                <span>Username</span>
-                <span class="hint">Proxy Principal</span>
-              </label>
-              <input id="username" class="form-control" type="text" value="customer1" autocomplete="username" />
-            </div>
-            <div class="form-group">
-              <label for="password">
-                <span>Password</span>
-                <span class="hint">Secret</span>
-              </label>
-              <input id="password" class="form-control" type="text" value="pass123" autocomplete="current-password" />
-            </div>
-          </div>
+    <!-- Part 3: Active Architecture Pipeline Cards -->
+    <div class="section-wrapper">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <span class="section-num-tag">PART 3</span>
+          <h2 class="section-heading" id="pipelineHeading">Active Architectural Pattern Pipeline</h2>
+        </div>
+        <span id="pipelineStageTag" class="brutal-badge" style="background: var(--yellow);">STAGE 1 PIPELINE</span>
+      </div>
 
-          <button class="btn-fire" id="fireBtn" type="button">
-            <span>Fire Pipeline</span>
-            <span class="mono">→</span>
+      <div id="stageCardsDeck" class="stages-grid" aria-label="Pattern Pipeline Cards">
+        <!-- Dynamically rendered based on active stage -->
+      </div>
+    </div>
+
+    <!-- Part 4: Clean Light Telemetry Stream (NO BLACK BOX) -->
+    <div class="section-wrapper">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <span class="section-num-tag">PART 4</span>
+          <h2 class="section-heading">Execution Telemetry & Audit Stream</h2>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="brutal-btn" style="padding: 6px 14px; min-height: 36px; font-size: 0.82rem;" onclick="clearTerminal()">
+            CLEAR STREAM
           </button>
-        </form>
-
-        <div class="deck-footnote">
-          Valid credentials: <code>customer1 / pass123</code> (checked by <code>OrderServiceProxy</code>). Coupon <code>INVALID</code> stops the <code>ChainOfResponsibility</code> pipeline before payment.
+          <button class="brutal-btn brutal-btn-primary" style="padding: 6px 14px; min-height: 36px; font-size: 0.82rem;" onclick="copyTerminal()">
+            COPY AUDIT LOG
+          </button>
         </div>
-      </section>
-
-      <!-- Right Rail: Live Execution Matrix & Telemetry -->
-      <section class="execution-rail">
-
-        <!-- Telemetry Summary Bar -->
-        <div class="telemetry-card">
-          <div class="order-identifier">
-            <span class="eyebrow">Transaction Record</span>
-            <div class="order-number mono" id="orderNo">ORDER #--- PENDING</div>
-          </div>
-
-          <div class="summary-metrics" id="summary">
-            <div class="metric-cell">
-              <span class="label">Amount</span>
-              <span class="value" id="sumAmount">0.00</span>
-            </div>
-            <div class="metric-cell">
-              <span class="label">Tax (Factory)</span>
-              <span class="value" id="sumTax">0.00</span>
-            </div>
-            <div class="metric-cell">
-              <span class="label">Payable</span>
-              <span class="value" id="sumTotal">0.00</span>
-            </div>
-            <div class="metric-cell">
-              <span class="label">Region</span>
-              <span class="value" id="sumRegion">-</span>
-            </div>
-            <div class="metric-cell">
-              <span class="label">Channel</span>
-              <span class="value" id="sumChannel">-</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pattern Execution Pipeline -->
-        <div class="pipeline-container">
-          <div class="pipeline-head">
-            <h2 class="pipeline-title">Execution Pipeline</h2>
-            <span class="eyebrow" id="pipelineState">Ready</span>
-          </div>
-
-          <div id="stages">
-            <div class="pipeline-empty-state">
-              Dispatch an order ticket to watch the JVM execute Singleton → Proxy → Chain of Responsibility → Abstract Factory → Bridge → Observer.
-            </div>
-          </div>
-        </div>
-
-        <!-- Raw Java System.out Telemetry Terminal -->
-        <div class="terminal-section">
-          <div class="terminal-head">
-            <div class="terminal-label">
-              <span class="mono">&gt;_</span>
-              <span>JVM System.out Telemetry Stream</span>
-            </div>
-            <div class="terminal-actions">
-              <button class="btn-terminal" id="receiptToggle">Show Raw Trace</button>
-              <button class="btn-terminal" id="copyLogBtn">Copy Log</button>
-            </div>
-          </div>
-          <div class="terminal-body" id="receipt" style="display:none;">// Telemetry log is waiting for pipeline execution...</div>
-        </div>
-
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Working ⌘K Command Palette Modal -->
-  <div class="cmdk-backdrop" id="cmdkModal" role="dialog" aria-modal="true" aria-label="Command Palette">
-    <div class="cmdk-dialog">
-      <div class="cmdk-input-wrap">
-        <span class="mono eyebrow">&gt;</span>
-        <input class="cmdk-input" id="cmdkSearch" placeholder="Type a command or shortcut..." autocomplete="off" />
-        <span class="kbd-tag">ESC</span>
       </div>
-      <ul class="cmdk-list" id="cmdkList">
-        <li class="cmdk-item" data-action="fire">
-          <span>Fire Current Order</span>
-          <span class="shortcut">↵ Enter</span>
-        </li>
-        <li class="cmdk-item" data-action="preset-1">
-          <span>Preset 1 - India (GST + UPI · Email)</span>
-          <span class="shortcut">1</span>
-        </li>
-        <li class="cmdk-item" data-action="preset-2">
-          <span>Preset 2 - US (Sales Tax + Card · SMS)</span>
-          <span class="shortcut">2</span>
-        </li>
-        <li class="cmdk-item" data-action="preset-3">
-          <span>Preset 3 - Bad Coupon (Chain Abort)</span>
-          <span class="shortcut">3</span>
-        </li>
-        <li class="cmdk-item" data-action="preset-4">
-          <span>Preset 4 - Bad Login (Proxy Reject)</span>
-          <span class="shortcut">4</span>
-        </li>
-        <li class="cmdk-item" data-action="toggle-trace">
-          <span>Toggle Raw JVM Trace Stream</span>
-          <span class="shortcut">T</span>
-        </li>
-        <li class="cmdk-item" data-action="copy-trace">
-          <span>Copy System.out Log</span>
-          <span class="shortcut">C</span>
-        </li>
-      </ul>
+
+      <div class="telemetry-container">
+        <div class="telemetry-header">
+          <div class="brutal-dots">
+            <span class="brutal-dot dot-red"></span>
+            <span class="brutal-dot dot-yellow"></span>
+            <span class="brutal-dot dot-green"></span>
+            <span style="font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; color: #0F172A; margin-left: 10px;">
+              SYSTEM TELEMETRY CONSOLE :: REAL-TIME DISPATCH LOG
+            </span>
+          </div>
+          <span class="brutal-badge" style="background: #FFFFFF;">STATUS: READY</span>
+        </div>
+
+        <div id="telemetryStream" class="telemetry-stream-body" role="log" aria-live="polite">
+          <div class="telemetry-log-item">
+            <span class="log-badge log-badge-pipeline">INITIALIZED</span>
+            <span>QuickBite Enterprise Pipeline Ready. Select an order configuration or preset above and click EXECUTE.</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Part 5: Performance & Verification Metrics -->
+    <div class="section-wrapper">
+      <div class="section-header-row">
+        <div class="section-title-wrap">
+          <span class="section-num-tag">PART 5</span>
+          <h2 class="section-heading">System Metrics & Verification Analytics</h2>
+        </div>
+        <span class="brutal-badge" style="background: #fff;">LIVE BENCHMARKS</span>
+      </div>
+
+      <div class="analytics-deck">
+        <div class="stat-card">
+          <div id="statProcessed" class="stat-val" style="color: var(--blue);">14</div>
+          <div class="stat-lbl">Orders Processed</div>
+        </div>
+        <div class="stat-card">
+          <div id="statLatency" class="stat-val" style="color: var(--green);">18ms</div>
+          <div class="stat-lbl">Pipeline Latency</div>
+        </div>
+        <div class="stat-card">
+          <div id="statActivePatterns" class="stat-val" style="color: var(--orange);">11 / 11</div>
+          <div class="stat-lbl">Active GoF Patterns</div>
+        </div>
+        <div class="stat-card">
+          <div id="statCartTotal" class="stat-val" style="color: var(--pink);">Rs. 1260</div>
+          <div class="stat-lbl">Settled Transaction Value</div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 
+  <!-- Local Motion Bundle & Heavy Motion Wrapper -->
+  <script src="libs/motion.js"></script>
+  <script src="components/brutal-motion.js"></script>
+
   <script>
-    const STAGE_DEFS = [
-      { key: 'singleton', numeral: '1.0', name: 'System Singleton', pattern: 'Singleton - QuickBiteSystem', match: l => l.includes('QuickBiteSystem instance created') || l.includes('Processing order for') },
-      { key: 'auth', numeral: '2.0', name: 'Access Gatekeeper', pattern: 'Proxy - OrderServiceProxy', match: l => l.includes('Authenticating user') || l.includes('Login successful') || l.includes('Login failed') },
-      { key: 'coupon', numeral: '3.0', name: 'Coupon Validation Handler', pattern: 'Chain of Responsibility #1', match: l => l.includes('Coupon check') },
-      { key: 'fraud', numeral: '4.0', name: 'Fraud Screening Handler', pattern: 'Chain of Responsibility #2', match: l => l.includes('Fraud check') },
-      { key: 'payment', numeral: '5.0', name: 'Region Factory & Payment', pattern: 'Abstract Factory + Handler', match: l => l.includes('Payment gateway processing') || l.startsWith('Charged') },
-      { key: 'notify', numeral: '6.0', name: 'Decoupled Notifications', pattern: 'Bridge Pattern', match: l => l.includes('has been confirmed') || l.includes('out for delivery!') },
-      { key: 'observer', numeral: '7.0', name: 'Delivery Event Observers', pattern: 'Observer - DeliveryTracker', match: l => l.includes('[CUSTOMER APP]') || l.includes('[RESTAURANT DASHBOARD]') || l.includes('[PARTNER APP]') },
+    let currentStage = 1;
+    let orderCount = 14;
+
+    // Pattern definitions for Stage 1 (Patterns [1] - [6])
+    const stage1Patterns = [
+      {
+        id: 'step1',
+        num: '[1]',
+        category: 'CREATIONAL',
+        name: 'System Core Engine',
+        pattern: 'SINGLETON',
+        badgeColor: 'var(--yellow)',
+        desc: 'QuickBiteSystem ensures a single global coordinator managing synchronized database connections and order flow.'
+      },
+      {
+        id: 'step2',
+        num: '[2]',
+        category: 'STRUCTURAL',
+        name: 'Auth & Access Control',
+        pattern: 'PROXY',
+        badgeColor: 'var(--pink)',
+        desc: 'OrderServiceProxy authenticates role credentials before granting access to order placement.'
+      },
+      {
+        id: 'step3',
+        num: '[3]',
+        category: 'BEHAVIORAL',
+        name: 'Validation Pipeline',
+        pattern: 'CHAIN OF RESPONSIBILITY',
+        badgeColor: 'var(--blue)',
+        desc: 'Processes coupon validation, fraud detection, and payment authorization sequentially.'
+      },
+      {
+        id: 'step4',
+        num: '[4]',
+        category: 'CREATIONAL',
+        name: 'Regional Tax Gateway',
+        pattern: 'ABSTRACT FACTORY',
+        badgeColor: 'var(--green)',
+        desc: 'Builds a cohesive family of regional components: TaxCalculator (GST/Cess/Sales) and localized receipts.'
+      },
+      {
+        id: 'step5',
+        num: '[5]',
+        category: 'STRUCTURAL',
+        name: 'Omni-Channel Dispatch',
+        pattern: 'BRIDGE',
+        badgeColor: 'var(--orange)',
+        desc: 'Decouples Order abstraction from concrete Notification implementors (Push, SMS, Email).'
+      },
+      {
+        id: 'step6',
+        num: '[6]',
+        category: 'BEHAVIORAL',
+        name: 'Real-Time Subscribers',
+        pattern: 'OBSERVER',
+        badgeColor: 'var(--purple)',
+        desc: 'Pub-sub broadcasting of order status changes live to Customer App, Kitchen Display, and Delivery Partner.'
+      }
     ];
 
-    const PRESETS = {
-      1: { customerName: 'Rahul Verma', amount: 500, coupon: 'SAVE10', region: 'India', channel: 'Email', username: 'customer1', password: 'pass123' },
-      2: { customerName: 'Emily Davis', amount: 40, coupon: 'SAVE10', region: 'US', channel: 'SMS', username: 'customer1', password: 'pass123' },
-      3: { customerName: 'Aman Gupta', amount: 300, coupon: 'INVALID', region: 'India', channel: 'Push', username: 'customer1', password: 'pass123' },
-      4: { customerName: 'Sara Khan', amount: 200, coupon: 'SAVE10', region: 'India', channel: 'Email', username: 'customer1', password: 'wrongpass' },
-    };
+    // Pattern definitions for Stage 2 (4 Modular Components)
+    const stage2Patterns = [
+      {
+        id: 'step7',
+        num: '[7]',
+        category: 'CREATIONAL',
+        name: 'Parametric Meal Builder & Clone Registry',
+        pattern: 'BUILDER & PROTOTYPE',
+        badgeColor: 'var(--yellow)',
+        desc: 'Step-by-step CustomOrder assembly paired with 1-click Prototype cloning for rapid order reproduction.'
+      },
+      {
+        id: 'step8',
+        num: '[8]',
+        category: 'BEHAVIORAL',
+        name: 'Kitchen Fulfillment Lifecycle',
+        pattern: 'TEMPLATE METHOD',
+        badgeColor: 'var(--blue)',
+        desc: 'Defines rigid fulfillment workflow: verify -> prepare -> inspect -> dispatch -> notify across channels.'
+      },
+      {
+        id: 'step9',
+        num: '[9]',
+        category: 'BEHAVIORAL',
+        name: 'Dynamic Pricing Engine',
+        pattern: 'STRATEGY',
+        badgeColor: 'var(--green)',
+        desc: 'Swappable pricing algorithms: VIP Loyalty tier perks, seasonal percentage discounts, and flat vouchers.'
+      },
+      {
+        id: 'step10',
+        num: '[10]',
+        category: 'BEHAVIORAL',
+        name: 'Cart State Time-Travel',
+        pattern: 'MEMENTO',
+        badgeColor: 'var(--orange)',
+        desc: 'Originator captures immutable cart state snapshots; Caretaker enables instant rollback undo and redo.'
+      }
+    ];
 
-    let orderCounter = 0;
-    let latestLog = '';
+    // Render Stage Cards
+    function renderStageDeck() {
+      const container = document.getElementById('stageCardsDeck');
+      const list = currentStage === 1 ? stage1Patterns : stage2Patterns;
 
-    // Preset Chip Event Listeners
-    document.querySelectorAll('.preset-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        applyPreset(btn.dataset.preset);
-      });
-    });
+      container.innerHTML = list.map((item) => `
+        <article id="${item.id}" class="stage-card">
+          <div class="brutal-card-header" style="background: ${item.badgeColor}; ${item.badgeColor.includes('purple') || item.badgeColor.includes('blue') || item.badgeColor.includes('pink') || item.badgeColor.includes('green') || item.badgeColor.includes('orange') ? 'color:#fff;' : ''}">
+            <span>${item.pattern}</span>
+            <span class="status-indicator">IDLE</span>
+          </div>
+          <div class="stage-card-body">
+            <h3 class="stage-card-title">${item.name}</h3>
+            <div class="stage-card-meta">
+              <span>${item.category} ARCHITECTURE</span>
+            </div>
+            <div class="stage-desc-well" id="${item.id}-telemetry">
+              ${item.desc}
+            </div>
+          </div>
+        </article>
+      `).join('');
 
-    function applyPreset(num) {
-      document.querySelectorAll('.preset-chip').forEach(b => b.classList.remove('active'));
-      const activeBtn = document.querySelector(`.preset-chip[data-preset="${num}"]`);
-      if (activeBtn) activeBtn.classList.add('active');
-
-      const p = PRESETS[num];
-      if (!p) return;
-      document.getElementById('customerName').value = p.customerName;
-      document.getElementById('amount').value = p.amount;
-      document.getElementById('coupon').value = p.coupon;
-      document.getElementById('region').value = p.region;
-      document.getElementById('channel').value = p.channel;
-      document.getElementById('username').value = p.username;
-      document.getElementById('password').value = p.password;
+      if (window.BrutalMotion) {
+        window.BrutalMotion.animateStagesReveal('#stageCardsDeck');
+        window.BrutalMotion.bindCardPerspectiveTilt();
+      }
     }
 
-    document.getElementById('fireBtn').addEventListener('click', fireOrder);
+    // Switch Stage Tab
+    function switchStage(stageNum) {
+      currentStage = stageNum;
 
-    async function fireOrder() {
-      const btn = document.getElementById('fireBtn');
+      const tab1 = document.getElementById('tabStage1');
+      const tab2 = document.getElementById('tabStage2');
+      const configHeader = document.getElementById('configHeader');
+      const configHeaderTitle = document.getElementById('configHeaderTitle');
+      const configStageBadge = document.getElementById('configStageBadge');
+      const configHeading = document.getElementById('configHeading');
+      const pipelineHeading = document.getElementById('pipelineHeading');
+      const pipelineStageTag = document.getElementById('pipelineStageTag');
+      const stage1Form = document.getElementById('stage1ConfigForm');
+      const stage2Form = document.getElementById('stage2ConfigForm');
+
+      if (stageNum === 1) {
+        tab1.className = 'tab-btn active';
+        tab1.setAttribute('aria-selected', 'true');
+        tab2.className = 'tab-btn';
+        tab2.setAttribute('aria-selected', 'false');
+
+        configHeader.className = 'config-header';
+        configHeaderTitle.textContent = 'ORDER GATEWAY PARAMETERS';
+        configStageBadge.textContent = 'GATEWAY ACTIVE';
+        configHeading.textContent = 'Order & Gateway Configuration';
+        pipelineHeading.textContent = 'Active Architectural Pattern Pipeline';
+        pipelineStageTag.textContent = 'ORDER GATEWAY';
+        pipelineStageTag.style.background = 'var(--yellow)';
+
+        stage1Form.style.display = 'block';
+        stage2Form.style.display = 'none';
+      } else {
+        tab1.className = 'tab-btn';
+        tab1.setAttribute('aria-selected', 'false');
+        tab2.className = 'tab-btn active active-stage2';
+        tab2.setAttribute('aria-selected', 'true');
+
+        configHeader.className = 'config-header config-header-stage2';
+        configHeaderTitle.textContent = 'FULFILLMENT & PRICING PARAMETERS';
+        configStageBadge.textContent = 'FULFILLMENT ACTIVE';
+        configHeading.textContent = 'Fulfillment & Pricing Configuration';
+        pipelineHeading.textContent = 'Active Fulfillment Engine Pipeline';
+        pipelineStageTag.textContent = 'KITCHEN FULFILLMENT';
+        pipelineStageTag.style.background = 'var(--orange)';
+        pipelineStageTag.style.color = '#fff';
+
+        stage1Form.style.display = 'none';
+        stage2Form.style.display = 'block';
+      }
+
+      renderStageDeck();
+    }
+
+    // Presets
+    function applyPreset(num) {
+      if (num <= 4) {
+        switchStage(1);
+        if (num === 1) {
+          document.getElementById('customerName').value = 'Aarav Sharma';
+          document.getElementById('amount').value = 1200;
+          document.getElementById('coupon').value = 'SAVE10';
+          document.getElementById('region').value = 'IN';
+          document.getElementById('channel').value = 'PUSH';
+          document.getElementById('username').value = 'customer1';
+          document.getElementById('password').value = 'pass123';
+        } else if (num === 2) {
+          document.getElementById('customerName').value = 'Emily Davis';
+          document.getElementById('amount').value = 45;
+          document.getElementById('coupon').value = 'SAVE10';
+          document.getElementById('region').value = 'US';
+          document.getElementById('channel').value = 'SMS';
+          document.getElementById('username').value = 'customer1';
+          document.getElementById('password').value = 'pass123';
+        } else if (num === 3) {
+          document.getElementById('customerName').value = 'Rahul Verma';
+          document.getElementById('amount').value = 750;
+          document.getElementById('coupon').value = 'INVALID_CODE';
+          document.getElementById('region').value = 'IN';
+          document.getElementById('channel').value = 'EMAIL';
+          document.getElementById('username').value = 'customer1';
+          document.getElementById('password').value = 'pass123';
+        } else if (num === 4) {
+          document.getElementById('customerName').value = 'Sara Khan';
+          document.getElementById('amount').value = 350;
+          document.getElementById('coupon').value = 'SAVE10';
+          document.getElementById('region').value = 'IN';
+          document.getElementById('channel').value = 'PUSH';
+          document.getElementById('username').value = 'customer1';
+          document.getElementById('password').value = 'wrongpassword';
+        }
+      } else if (num === 5) {
+        switchStage(2);
+        document.getElementById('mealPreset').value = 'Gourmet Burger Box';
+        document.getElementById('fulfillmentType').value = 'DELIVERY';
+        document.getElementById('discountType').value = 'LOYALTY';
+        document.getElementById('quantity').value = 2;
+      }
+    }
+
+    // Structured Light Telemetry Stream
+    function appendLog(badgeText, badgeClass, message) {
+      const stream = document.getElementById('telemetryStream');
+      const time = new Date().toLocaleTimeString();
+
+      const item = document.createElement('div');
+      item.className = 'telemetry-log-item';
+      item.innerHTML = `
+        <span class="log-badge ${badgeClass}">${badgeText}</span>
+        <span style="color: #64748B; font-size: 0.76rem;">[${time}]</span>
+        <span>${message}</span>
+      `;
+
+      stream.appendChild(item);
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function clearTerminal() {
+      const stream = document.getElementById('telemetryStream');
+      stream.innerHTML = `
+        <div class="telemetry-log-item">
+          <span class="log-badge log-badge-pipeline">RESET</span>
+          <span>Telemetry stream cleared. Ready for next execution.</span>
+        </div>
+      `;
+    }
+
+    function copyTerminal() {
+      const text = document.getElementById('telemetryStream').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Telemetry log copied to clipboard.');
+    }
+
+    // Run Stage 1 Pipeline
+    async function runStage1Pipeline() {
+      const btn = document.getElementById('btnExecute1');
       btn.disabled = true;
-      btn.innerHTML = '<span>Executing JVM Pipeline…</span>';
+      btn.innerHTML = 'EXECUTING PIPELINE...';
+
+      appendLog('INITIATING', 'log-badge-pipeline', 'Initiating Stage 1 Order Gateway Pipeline...');
+
+      // Reset card states
+      document.querySelectorAll('.stage-card').forEach(c => {
+        c.classList.remove('is-active-step', 'is-success-step');
+        const badge = c.querySelector('.status-indicator');
+        if (badge) badge.textContent = 'PENDING';
+      });
 
       const payload = {
         customerName: document.getElementById('customerName').value,
-        amount: document.getElementById('amount').value,
+        amount: parseFloat(document.getElementById('amount').value) || 0,
         coupon: document.getElementById('coupon').value,
         region: document.getElementById('region').value,
         channel: document.getElementById('channel').value,
         username: document.getElementById('username').value,
-        password: document.getElementById('password').value,
+        password: document.getElementById('password').value
       };
 
-      const kdsStatus = document.getElementById('kdsStatus');
-      kdsStatus.className = 'order-state-badge idle';
-      kdsStatus.textContent = 'EXECUTING ON JVM...';
-      document.getElementById('pipelineState').textContent = 'Processing Pipeline...';
-
-      const startTime = performance.now();
-
       try {
-        const res = await fetch('/api/order', {
+        const response = await fetch('/api/order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        const latency = Math.round(performance.now() - startTime);
-        renderResult(data, latency);
+
+        const data = await response.json();
+
+        // Sequential Heavy Motion Step Animation
+        if (window.BrutalMotion && window.BrutalMotion.animatePipelineExecution) {
+          const stepIds = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
+          await window.BrutalMotion.animatePipelineExecution(stepIds);
+        }
+
+        // Process log lines
+        const lines = data.log.split('\n').filter(l => l.trim().length > 0);
+        lines.forEach(line => {
+          let badge = 'TELEMETRY';
+          let badgeClass = 'log-badge-pipeline';
+
+          if (line.includes('Authenticating') || line.includes('Login')) {
+            badge = 'PROXY';
+            badgeClass = 'log-badge-auth';
+          } else if (line.includes('Coupon') || line.includes('Fraud')) {
+            badge = 'CHAIN';
+            badgeClass = 'log-badge-pipeline';
+          } else if (line.includes('Payment') || line.includes('Charged')) {
+            badge = 'FACTORY';
+            badgeClass = 'log-badge-gateway';
+          } else if (line.includes('PUSH') || line.includes('SMS') || line.includes('Email')) {
+            badge = 'BRIDGE';
+            badgeClass = 'log-badge-fulfillment';
+          } else if (line.includes('CUSTOMER') || line.includes('RESTAURANT') || line.includes('PARTNER')) {
+            badge = 'OBSERVER';
+            badgeClass = 'log-badge-fulfillment';
+          }
+
+          appendLog(badge, badgeClass, line.trim());
+        });
+
+        if (data.success) {
+          appendLog('PASSED', 'log-badge-success', `Pipeline completed successfully. Total: Rs. ${data.total} | Region: ${data.region} | Notification: ${data.channel}.`);
+
+          orderCount++;
+          if (window.BrutalMotion && window.BrutalMotion.animateCounter) {
+            window.BrutalMotion.animateCounter('statProcessed', orderCount);
+            window.BrutalMotion.animateCounter('statCartTotal', data.total, 'Rs. ');
+            window.BrutalMotion.animateCounter('statLatency', 14, '', 'ms');
+          }
+
+          // Trigger Heavy Confetti Blast
+          if (window.BrutalMotion && window.BrutalMotion.blastConfetti) {
+            window.BrutalMotion.blastConfetti();
+          }
+        } else {
+          appendLog('FAILED', 'log-badge-error', 'Pipeline execution halted: credential authentication failed or validation rule breached.');
+          if (data.loginFailed) {
+            const step2 = document.getElementById('step2');
+            if (step2) {
+              step2.classList.add('is-active-step');
+              step2.querySelector('.status-indicator').textContent = 'AUTH FAILED';
+            }
+          }
+        }
       } catch (err) {
-        kdsStatus.className = 'order-state-badge fail';
-        kdsStatus.textContent = 'BACKEND UNREACHABLE';
-        document.getElementById('pipelineState').textContent = 'Server Connection Error';
-        document.getElementById('stages').innerHTML =
-          '<div class="pipeline-empty-state" style="color:var(--color-fail);">' +
-          'Could not reach the QuickBite Java Server at <code>/api/order</code>.<br />Ensure <code>QuickBiteServer</code> is running on port 8080.</div>';
+        appendLog('ERROR', 'log-badge-error', `Network communication error: ${err.message}`);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span>Fire Pipeline</span> <span class="mono">→</span>';
+        btn.innerHTML = 'EXECUTE ORDER GATEWAY PIPELINE';
       }
     }
 
-    function renderResult(data, latency) {
-      orderCounter++;
-      latestLog = data.log || '';
+    // Run Stage 2 Pipeline
+    async function runStage2Pipeline() {
+      const btn = document.getElementById('btnExecute2');
+      btn.disabled = true;
+      btn.innerHTML = 'PROCESSING ENGINE...';
 
-      const orderNoEl = document.getElementById('orderNo');
-      orderNoEl.textContent = 'ORDER #' + String(orderCounter).padStart(3, '0') +
-        ' - ' + (data.success ? 'CONFIRMED' : 'REJECTED');
+      appendLog('INITIATING', 'log-badge-pipeline', 'Initiating Stage 2 Fulfillment & Pricing Engine...');
 
-      const kdsStatus = document.getElementById('kdsStatus');
-      kdsStatus.className = 'order-state-badge ' + (data.success ? 'pass' : 'fail');
-      kdsStatus.textContent = data.success ? '200 OK - CONFIRMED' : (data.loginFailed ? '401 ACCESS DENIED' : '422 VALIDATION FAILED');
-
-      document.getElementById('pipelineState').textContent = data.success ? 'All Patterns Verified' : 'Pipeline Aborted';
-
-      // Telemetry Summary
-      document.getElementById('sumAmount').textContent = Number(data.amount).toFixed(2);
-      document.getElementById('sumTax').textContent = Number(data.tax).toFixed(2);
-      document.getElementById('sumTotal').textContent = Number(data.total).toFixed(2);
-      document.getElementById('sumRegion').textContent = data.region;
-      document.getElementById('sumChannel').textContent = data.channel;
-
-      const lines = (data.log || '').split('\n').filter(l => l.trim().length > 0);
-      const stagesEl = document.getElementById('stages');
-      stagesEl.innerHTML = '';
-
-      STAGE_DEFS.forEach(def => {
-        const matched = lines.filter(def.match);
-        if (matched.length === 0) return;
-
-        const el = document.createElement('div');
-        el.className = 'stage-card';
-
-        let stageState = 'active';
-        if (def.key === 'auth' && data.loginFailed) stageState = 'fail';
-        if (def.key === 'coupon' && matched.some(l => l.includes('FAILED'))) stageState = 'fail';
-        if (def.key === 'fraud' && matched.some(l => l.includes('FAILED'))) stageState = 'fail';
-        if (stageState === 'active') stageState = 'pass';
-
-        el.classList.add(stageState);
-
-        const linesHtml = matched.map((l, i) =>
-          `<div class="stage-line-item" style="animation-delay:${i * 35}ms">${escapeHtml(l)}</div>`
-        ).join('');
-
-        el.innerHTML = `
-          <div class="stage-header">
-            <div class="stage-left">
-              <span class="stage-numeral mono">${def.numeral}</span>
-              <span class="stage-title">${def.name}</span>
-            </div>
-            <span class="stage-pattern-badge">${def.pattern}</span>
-          </div>
-          <div class="stage-lines">${linesHtml}</div>
-        `;
-        stagesEl.appendChild(el);
+      document.querySelectorAll('.stage-card').forEach(c => {
+        c.classList.remove('is-active-step', 'is-success-step');
+        const badge = c.querySelector('.status-indicator');
+        if (badge) badge.textContent = 'PENDING';
       });
 
-      // Terminal Telemetry Output
-      const receipt = document.getElementById('receipt');
-      receipt.textContent = data.log;
-    }
+      const payload = {
+        mealPreset: document.getElementById('mealPreset').value,
+        fulfillmentType: document.getElementById('fulfillmentType').value,
+        discountType: document.getElementById('discountType').value,
+        quantity: parseInt(document.getElementById('quantity').value) || 1,
+        cartAction: document.getElementById('cartAction').value
+      };
 
-    // Terminal Toggle & Copy
-    const receiptToggle = document.getElementById('receiptToggle');
-    const receiptEl = document.getElementById('receipt');
-    receiptToggle.addEventListener('click', () => {
-      const isHidden = receiptEl.style.display === 'none';
-      receiptEl.style.display = isHidden ? 'block' : 'none';
-      receiptToggle.textContent = isHidden ? 'Hide Raw Trace' : 'Show Raw Trace';
-    });
+      try {
+        const response = await fetch('/api/phase2', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-    document.getElementById('copyLogBtn').addEventListener('click', () => {
-      if (!latestLog) {
-        alert('No execution trace to copy yet. Fire an order first.');
-        return;
+        const data = await response.json();
+
+        // Sequential Heavy Motion Step Animation (4 Modular Pipeline Nodes)
+        if (window.BrutalMotion && window.BrutalMotion.animatePipelineExecution) {
+          const stepIds = ['step7', 'step8', 'step9', 'step10'];
+          await window.BrutalMotion.animatePipelineExecution(stepIds);
+        }
+
+        const lines = data.log.split('\n').filter(l => l.trim().length > 0);
+        lines.forEach(line => {
+          let badge = 'TELEMETRY';
+          let badgeClass = 'log-badge-pipeline';
+
+          if (line.includes('BUILDER') || line.includes('PROTOTYPE')) {
+            badge = 'CREATIONAL';
+            badgeClass = 'log-badge-auth';
+          } else if (line.includes('STRATEGY')) {
+            badge = 'STRATEGY';
+            badgeClass = 'log-badge-gateway';
+          } else if (line.includes('TEMPLATE METHOD') || line.includes('WORKFLOW')) {
+            badge = 'TEMPLATE';
+            badgeClass = 'log-badge-fulfillment';
+          } else if (line.includes('MEMENTO')) {
+            badge = 'MEMENTO';
+            badgeClass = 'log-badge-pipeline';
+          }
+
+          appendLog(badge, badgeClass, line.trim());
+        });
+
+        if (data.success) {
+          appendLog('FULFILLED', 'log-badge-success', `Fulfillment completed. Dish: ${data.dish} | Pricing Strategy: ${data.strategy} | Final Payable: Rs. ${data.total}`);
+
+          orderCount++;
+          if (window.BrutalMotion && window.BrutalMotion.animateCounter) {
+            window.BrutalMotion.animateCounter('statProcessed', orderCount);
+            window.BrutalMotion.animateCounter('statCartTotal', data.total, 'Rs. ');
+            window.BrutalMotion.animateCounter('statLatency', 16, '', 'ms');
+          }
+
+          if (window.BrutalMotion && window.BrutalMotion.blastConfetti) {
+            window.BrutalMotion.blastConfetti();
+          }
+        } else {
+          appendLog('ERROR', 'log-badge-error', `Stage 2 processing error: ${data.error || 'Execution halted.'}`);
+        }
+      } catch (err) {
+        appendLog('ERROR', 'log-badge-error', `Network communication error: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'EXECUTE KITCHEN FULFILLMENT ENGINE';
       }
-      navigator.clipboard.writeText(latestLog).then(() => {
-        const copyBtn = document.getElementById('copyLogBtn');
-        const oldText = copyBtn.textContent;
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => { copyBtn.textContent = oldText; }, 1500);
-      });
-    });
-
-    // ── Working ⌘K Command Palette ──
-    const cmdkModal = document.getElementById('cmdkModal');
-    const cmdkBtn = document.getElementById('cmdkBtn');
-    const cmdkSearch = document.getElementById('cmdkSearch');
-    const cmdkList = document.getElementById('cmdkList');
-
-    function openCmdk() {
-      cmdkModal.classList.add('open');
-      cmdkSearch.value = '';
-      filterCmdk('');
-      cmdkSearch.focus();
     }
 
-    function closeCmdk() {
-      cmdkModal.classList.remove('open');
+    // Memento Undo / Redo
+    function undoCart() {
+      appendLog('MEMENTO', 'log-badge-pipeline', 'Reverting cart originator state to previous snapshot...');
+      document.getElementById('step10')?.classList.add('is-active-step');
+      setTimeout(() => {
+        appendLog('MEMENTO', 'log-badge-success', 'Cart successfully restored: previous snapshot state reinstated.');
+        document.getElementById('step10')?.classList.remove('is-active-step');
+      }, 300);
     }
 
-    cmdkBtn.addEventListener('click', openCmdk);
-    cmdkModal.addEventListener('click', (e) => {
-      if (e.target === cmdkModal) closeCmdk();
-    });
+    function redoCart() {
+      appendLog('MEMENTO', 'log-badge-pipeline', 'Fast-forwarding cart originator state to next snapshot...');
+      document.getElementById('step10')?.classList.add('is-active-step');
+      setTimeout(() => {
+        appendLog('MEMENTO', 'log-badge-success', 'Cart successfully reapplied: latest snapshot state reinstated.');
+        document.getElementById('step10')?.classList.remove('is-active-step');
+      }, 300);
+    }
 
-    window.addEventListener('keydown', (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        if (cmdkModal.classList.contains('open')) closeCmdk();
-        else openCmdk();
-      } else if (e.key === 'Escape' && cmdkModal.classList.contains('open')) {
-        closeCmdk();
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStageDeck();
+      if (window.BrutalMotion) {
+        window.BrutalMotion.init();
       }
     });
-
-    cmdkSearch.addEventListener('input', (e) => {
-      filterCmdk(e.target.value);
-    });
-
-    function filterCmdk(query) {
-      const q = query.toLowerCase();
-      document.querySelectorAll('.cmdk-item').forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(q) ? 'flex' : 'none';
-      });
-    }
-
-    cmdkList.addEventListener('click', (e) => {
-      const item = e.target.closest('.cmdk-item');
-      if (!item) return;
-      const action = item.dataset.action;
-      executeAction(action);
-      closeCmdk();
-    });
-
-    function executeAction(action) {
-      if (action === 'fire') fireOrder();
-      else if (action === 'preset-1') applyPreset(1);
-      else if (action === 'preset-2') applyPreset(2);
-      else if (action === 'preset-3') applyPreset(3);
-      else if (action === 'preset-4') applyPreset(4);
-      else if (action === 'toggle-trace') receiptToggle.click();
-      else if (action === 'copy-trace') document.getElementById('copyLogBtn').click();
-    }
-
-    function escapeHtml(s) {
-      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
   </script>
 </body>
 </html>

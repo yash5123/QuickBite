@@ -5,7 +5,6 @@ import part3_chain_of_responsibility.*;
 import part4_bridge.*;
 import part5_observer_proxy.*;
 
-// P_2
 public class QuickBiteSystem {
 
     private static QuickBiteSystem instance;
