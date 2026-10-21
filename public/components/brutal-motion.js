@@ -165,6 +165,17 @@
           this.mouse.x = -1000;
           this.mouse.y = -1000;
         });
+        hero.addEventListener('touchmove', (e) => {
+          if (e.touches && e.touches.length > 0) {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouse.x = e.touches[0].clientX - rect.left;
+            this.mouse.y = e.touches[0].clientY - rect.top;
+          }
+        }, { passive: true });
+        hero.addEventListener('touchend', () => {
+          this.mouse.x = -1000;
+          this.mouse.y = -1000;
+        });
       }
 
       const colors = ['#FFD60A', '#FF6B9D', '#3B82F6', '#10B981', '#8B5CF6', '#FF8A3D', '#06B6D4', '#84CC16'];
@@ -206,7 +217,7 @@
       if (!this.canvas) return;
       const rect = this.canvas.parentElement.getBoundingClientRect();
       this.canvas.width = rect.width;
-      this.canvas.height = Math.max(380, rect.height);
+      this.canvas.height = rect.height;
     },
 
     startLoop() {

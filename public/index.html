@@ -514,6 +514,361 @@
       font-weight: 800;
       color: var(--ink);
     }
+
+    /* ── Canvas Placement & Mobile Responsiveness ── */
+    #generativeBg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Mobile & Tablet Responsive Media Queries ── */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 12px 14px 60px 14px;
+      }
+
+      .section-wrapper {
+        margin-top: 24px;
+      }
+
+      .section-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .section-header-row > div:last-child {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+      }
+
+      .section-header-row > div:last-child .brutal-btn {
+        flex: 1;
+        min-height: 42px;
+        font-size: 0.78rem;
+        padding: 8px 10px;
+        justify-content: center;
+      }
+
+      .section-title-wrap {
+        gap: 8px;
+      }
+
+      .section-heading {
+        font-size: 1.25rem;
+      }
+
+      /* Navbar */
+      .brutal-nav {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 14px;
+        gap: 12px;
+        top: 8px;
+        border-width: 3px;
+      }
+
+      .brand-mark {
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .brand-box {
+        font-size: 1.15rem;
+        padding: 5px 12px;
+      }
+
+      .brand-subtitle {
+        font-size: 0.76rem;
+        text-align: center;
+        letter-spacing: 0.02em;
+      }
+
+      .nav-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        gap: 6px;
+        padding: 4px;
+      }
+
+      .tab-btn {
+        padding: 10px 8px;
+        font-size: 0.82rem;
+        text-align: center;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: normal;
+        line-height: 1.2;
+      }
+
+      /* Marquee ribbon */
+      .brutal-marquee-wrap {
+        margin: 12px 0 18px 0;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+      }
+
+      .brutal-marquee-content {
+        font-size: 0.82rem;
+        gap: 16px;
+      }
+
+      /* Hero */
+      .hero-container {
+        padding: 24px 16px;
+        margin-top: 12px;
+        border-width: 3px;
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+
+      .hero-kicker {
+        font-size: 0.72rem;
+        padding: 4px 10px;
+        margin-bottom: 12px;
+      }
+
+      .hero-title {
+        font-size: clamp(1.7rem, 6.8vw, 2.35rem);
+        line-height: 1.14;
+        margin-bottom: 14px;
+      }
+
+      .hero-description {
+        font-size: 0.96rem;
+        line-height: 1.55;
+        margin-bottom: 18px;
+      }
+
+      .hero-tags {
+        gap: 6px;
+      }
+
+      .hero-tags .brutal-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        white-space: normal;
+        text-align: center;
+      }
+
+      /* Scenarios */
+      .scenarios-container {
+        padding: 14px 12px;
+        gap: 8px;
+      }
+
+      .scenarios-label {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 4px;
+        font-size: 0.78rem;
+      }
+
+      .scenario-btn {
+        flex: 1 1 calc(50% - 6px);
+        padding: 9px 8px;
+        font-size: 0.8rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      /* Config Card */
+      .config-card {
+        border-width: 3px;
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+
+      .config-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 14px;
+        gap: 8px;
+      }
+
+      .config-header-title {
+        font-size: 0.98rem;
+      }
+
+      .config-body {
+        padding: 16px 12px;
+      }
+
+      .config-sections-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .config-sub-box {
+        padding: 14px 12px;
+      }
+
+      .config-sub-heading {
+        font-size: 0.88rem;
+        margin-bottom: 12px;
+      }
+
+      .brutal-input,
+      .brutal-select {
+        font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+        padding: 11px 12px;
+        min-height: 46px;
+      }
+
+      .brutal-btn {
+        font-size: 0.95rem;
+        min-height: 50px;
+        padding: 11px 16px;
+      }
+
+      /* Mobile Tactile Active Feedback */
+      .brutal-btn:active,
+      .scenario-btn:active,
+      .tab-btn:active {
+        transform: translate(2px, 2px) !important;
+        box-shadow: 1px 1px 0 var(--ink) !important;
+      }
+
+      /* Pipeline Cards */
+      .stages-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .stage-card {
+        border-width: 3px;
+        box-shadow: 4px 4px 0 var(--ink);
+      }
+
+      .stage-card-body {
+        padding: 16px 14px;
+      }
+
+      .stage-card-title {
+        font-size: 1.18rem;
+      }
+
+      .stage-desc-well {
+        padding: 12px 12px;
+        font-size: 0.88rem;
+        min-height: auto;
+        line-height: 1.5;
+      }
+
+      /* Telemetry */
+      .telemetry-container {
+        border-width: 3px;
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+
+      .telemetry-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 14px;
+        gap: 8px;
+      }
+
+      .telemetry-stream-body {
+        padding: 12px 10px;
+        height: 240px;
+        gap: 8px;
+      }
+
+      .telemetry-log-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 10px 10px;
+        font-size: 0.84rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Analytics Deck */
+      .analytics-deck {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 14px 12px;
+        border-width: 2.5px;
+        box-shadow: 4px 4px 0 var(--ink);
+      }
+
+      .stat-val {
+        font-size: 2.1rem;
+        margin-bottom: 4px;
+      }
+
+      .stat-lbl {
+        font-size: 0.72rem;
+      }
+
+      /* Clean Footer */
+      .clean-footer {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 16px;
+        gap: 14px;
+        border-width: 3px;
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+
+      .footer-brand-title {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand-subtitle {
+        display: none; /* Keep header compact on small screens */
+      }
+
+      .scenario-btn {
+        flex: 1 1 100%;
+      }
+
+      .nav-tabs {
+        padding: 3px;
+      }
+
+      .tab-btn {
+        font-size: 0.76rem;
+        padding: 8px 4px;
+      }
+
+      .stat-card {
+        padding: 12px 10px;
+      }
+
+      .stat-val {
+        font-size: 1.65rem;
+      }
+
+      .stat-lbl {
+        font-size: 0.68rem;
+      }
+
+      .section-heading {
+        font-size: 1.15rem;
+      }
+    }
   </style>
 </head>
 <body>
