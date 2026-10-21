@@ -1,0 +1,7 @@
+.git
+.idea
+*.iml
+out/
+screenshots/
+uml_diagram/
+*.db
