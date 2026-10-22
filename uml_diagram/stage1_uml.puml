@@ -1,0 +1,243 @@
+@startuml
+scale max 2400 width
+skinparam dpi 130
+skinparam defaultFontName Arial
+skinparam classFontSize 11
+skinparam classAttributeFontSize 10
+skinparam packageFontSize 13
+skinparam packageStyle rectangle
+skinparam roundcorner 4
+skinparam shadowing false
+
+skinparam package {
+    BackgroundColor #FAFAF8
+    BorderColor #222222
+    BorderThickness 1.3
+}
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    ArrowColor #222222
+    BorderColor #222222
+    BorderThickness 1.1
+}
+
+' ═══════════════════════════════════════════════════════════
+' ROW 1: CORE SERVICES, SINGLETON, OBSERVER & PROXY
+' ═══════════════════════════════════════════════════════════
+package "System Core & Database" as p_core {
+    class QuickBiteServer {
+        + main(args : String[]) : void
+        + OrderApiHandler (/api/stage1)
+    }
+
+    class Database {
+        - {static} DB_URL : String
+        - {static} connection : Connection
+        + {static} getConnection() : Connection
+    }
+
+    class "Database.OrderRepository" as OrderRepo {
+        + save(order, region, channel, status) : void
+        + findAllAsText() : List<String>
+    }
+    Database +-- OrderRepo
+}
+
+package "part1_singleton" as p1 {
+    class Order {
+        - customerName : String
+        - amount : double
+        - tax : double
+        - couponCode : String
+        - paymentProcessor : PaymentProcessor
+        + getCustomerName() : String
+        + getAmount() : double
+        + getTax() : double
+        + setTax(tax : double) : void
+        + getCouponCode() : String
+        + getTotalPayable() : double
+    }
+
+    class QuickBiteSystem <<Singleton>> {
+        - {static} instance : QuickBiteSystem
+        - QuickBiteSystem()
+        + {static} getInstance() : QuickBiteSystem
+        + processOrder(order, regionFactory, channel) : void
+    }
+    Order "*" <-- QuickBiteSystem : coordinates
+}
+
+package "part5_observer_proxy" as p5 {
+    interface OrderService {
+        + placeOrder(order, regionFactory, channel) : void
+    }
+
+    class OrderServiceProxy implements OrderService {
+        - realOrderService : RealOrderService
+        - username : String
+        - password : String
+        + authenticate() : boolean
+        + placeOrder(order, regionFactory, channel) : void
+    }
+
+    class RealOrderService implements OrderService {
+        - tracker : DeliveryTracker
+        + placeOrder(order, regionFactory, channel) : void
+    }
+
+    enum DeliveryStatus {
+        PLACED
+        OUT_FOR_DELIVERY
+        DELIVERED
+    }
+
+    class DeliveryTracker {
+        - order : Order
+        - observers : List<DeliveryObserver>
+        - status : DeliveryStatus
+        + addObserver(observer : DeliveryObserver) : void
+        + removeObserver(observer : DeliveryObserver) : void
+        + setStatus(status : DeliveryStatus) : void
+        - notifyObservers() : void
+    }
+
+    interface DeliveryObserver {
+        + update(order : Order, status : DeliveryStatus) : void
+    }
+
+    class RestaurantDashboard implements DeliveryObserver {
+        + update(order : Order, status : DeliveryStatus) : void
+    }
+    class PartnerAppNotifier implements DeliveryObserver {
+        + update(order : Order, status : DeliveryStatus) : void
+    }
+    class CustomerAppNotifier implements DeliveryObserver {
+        + update(order : Order, status : DeliveryStatus) : void
+    }
+
+    OrderServiceProxy o--> "1" RealOrderService : delegates to
+    RealOrderService ..> DeliveryTracker : updates
+    DeliveryTracker o--> "*" DeliveryObserver : notifies
+}
+
+' ═══════════════════════════════════════════════════════════
+' ROW 2: ABSTRACT FACTORY, CHAIN OF RESPONSIBILITY, BRIDGE
+' ═══════════════════════════════════════════════════════════
+package "part2_abstract_factory" as p2 {
+    interface RegionFactory {
+        + createTaxCalculator() : TaxCalculator
+        + createPaymentProcessor() : PaymentProcessor
+    }
+
+    class IndiaRegionFactory implements RegionFactory {
+        + createTaxCalculator() : TaxCalculator
+        + createPaymentProcessor() : PaymentProcessor
+    }
+
+    class USRegionFactory implements RegionFactory {
+        + createTaxCalculator() : TaxCalculator
+        + createPaymentProcessor() : PaymentProcessor
+    }
+
+    interface TaxCalculator {
+        + calculateTax(amount : double) : double
+    }
+    class GSTCalculator implements TaxCalculator {
+        + calculateTax(amount : double) : double
+    }
+    class SalesTaxCalculator implements TaxCalculator {
+        + calculateTax(amount : double) : double
+    }
+
+    interface PaymentProcessor {
+        + charge(amount : double) : boolean
+    }
+    class UPIProcessor implements PaymentProcessor {
+        + charge(amount : double) : boolean
+    }
+    class CardProcessor implements PaymentProcessor {
+        + charge(amount : double) : boolean
+    }
+
+    IndiaRegionFactory ..> GSTCalculator : creates
+    IndiaRegionFactory ..> UPIProcessor : creates
+    USRegionFactory ..> SalesTaxCalculator : creates
+    USRegionFactory ..> CardProcessor : creates
+}
+
+package "part3_chain_of_responsibility" as p3 {
+    abstract class OrderHandler {
+        # next : OrderHandler
+        + setNext(next : OrderHandler) : OrderHandler
+        + handle(order : Order) : boolean
+    }
+
+    class CouponValidationHandler extends OrderHandler {
+        + handle(order : Order) : boolean
+    }
+    class FraudCheckHandler extends OrderHandler {
+        + handle(order : Order) : boolean
+    }
+    class PaymentGatewayHandler extends OrderHandler {
+        + handle(order : Order) : boolean
+    }
+
+    OrderHandler "0..1" o--> "1" OrderHandler : next
+}
+
+package "part4_bridge" as p4 {
+    abstract class Notification {
+        # channel : NotificationChannel
+        + Notification(channel : NotificationChannel)
+        + {abstract} send(customerName : String) : void
+    }
+
+    class OrderConfirmedNotification extends Notification {
+        + send(customerName : String) : void
+    }
+    class OutForDeliveryNotification extends Notification {
+        + send(customerName : String) : void
+    }
+
+    interface NotificationChannel {
+        + send(message : String) : void
+    }
+
+    class PushChannel implements NotificationChannel {
+        + send(message : String) : void
+    }
+    class SMSChannel implements NotificationChannel {
+        + send(message : String) : void
+    }
+    class EmailChannel implements NotificationChannel {
+        + send(message : String) : void
+    }
+
+    Notification o--> "1" NotificationChannel : bridges to
+}
+
+' ═══════════════════════════════════════════════════════════
+' INVOCATION & DELEGATION ARROWS
+' ═══════════════════════════════════════════════════════════
+QuickBiteServer ..> OrderServiceProxy : invokes (/api/stage1)
+RealOrderService ..> QuickBiteSystem : processes via
+RealOrderService ..> OrderRepo : persists audit
+QuickBiteSystem -down-> p2 : requests tax/payment
+QuickBiteSystem -down-> p3 : runs filter chain
+QuickBiteSystem -down-> p4 : dispatches notifications
+
+' ═══════════════════════════════════════════════════════════
+' STRICT 2-ROW GRID CONSTRAINTS (CLASS-LEVEL)
+' ═══════════════════════════════════════════════════════════
+QuickBiteServer -[hidden]right-> QuickBiteSystem
+QuickBiteSystem -[hidden]right-> OrderServiceProxy
+
+OrderRepo -[hidden]down-> RegionFactory
+Order -[hidden]down-> OrderHandler
+DeliveryObserver -[hidden]down-> Notification
+
+RegionFactory -[hidden]right-> OrderHandler
+OrderHandler -[hidden]right-> Notification
+
+@enduml

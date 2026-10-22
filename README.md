@@ -145,18 +145,34 @@ QuickBite intentionally avoids heavy framework dependencies like Spring Boot, Re
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" />
 
-## 📸 Architecture & Screenshots
+## 📸 Architecture Diagrams & Workbench Visuals
 
 <div align="center">
-  <img src="uml_diagram/UML_DIAGRAM.png" width="92%" alt="QuickBite Architecture UML Diagram" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
+  <h3>🏛️ Complete Master Architecture Diagram (All 9 Parts + Core Engine)</h3>
+  <img src="uml_diagram/UML_DIAGRAM.png" width="98%" alt="QuickBite Complete Master Architecture UML Diagram" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
   <br/>
-  *<sub>Full Architectural Class Diagram: 11 Gang of Four Patterns across 9 Modular Packages</sub>*
+  *<sub>Unified Enterprise System Hierarchy: 11 Gang of Four Patterns across 9 Modular Packages & Native HTTP Engine</sub>*
+
+  <br/><br/>
+
+  <h3>⚡ Stage 1 Architecture Deep-Dive (Parts 1 - 5: Order Gateway & Security Pipeline)</h3>
+  <img src="uml_diagram/stage1_uml.png" width="98%" alt="QuickBite Stage 1 Architecture UML Diagram" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
+  <br/>
+  *<sub>Patterns: Singleton · Abstract Factory · Chain of Responsibility · Bridge · Proxy · Observer</sub>*
+
+  <br/><br/>
+
+  <h3>🍳 Stage 2 Architecture Deep-Dive (Parts 6 - 9: Kitchen Fulfillment & Dynamic Pricing Engine)</h3>
+  <img src="uml_diagram/stage2_uml.png" width="98%" alt="QuickBite Stage 2 Architecture UML Diagram" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
+  <br/>
+  *<sub>Patterns: Builder · Prototype · Template Method · Strategy · Memento</sub>*
 </div>
 
 <br/>
 
 <div align="center">
-  <img src="screenshots/quickbite-hero.png" width="92%" alt="QuickBite Interactive Workbench Hero" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
+  <h3>✨ Neo-Brutalism Interactive Workbench Interface</h3>
+  <img src="screenshots/quickbite-hero.png" width="98%" alt="QuickBite Interactive Workbench Hero" style="border: 3px solid #000; box-shadow: 6px 6px 0 #000; border-radius: 8px;" />
   <br/>
   *<sub>Neo-Brutalism Workbench Hero with Live Generative Canvas Physics</sub>*
 </div>

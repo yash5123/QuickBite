@@ -1,0 +1,218 @@
+@startuml
+scale max 2400 width
+skinparam dpi 130
+skinparam defaultFontName Arial
+skinparam classFontSize 11
+skinparam classAttributeFontSize 10
+skinparam packageFontSize 13
+skinparam packageStyle rectangle
+skinparam roundcorner 4
+skinparam shadowing false
+
+skinparam package {
+    BackgroundColor #FAFAF8
+    BorderColor #222222
+    BorderThickness 1.3
+}
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    ArrowColor #222222
+    BorderColor #222222
+    BorderThickness 1.1
+}
+
+class QuickBiteServer {
+    + main(args : String[]) : void
+    + Phase2ApiHandler (/api/stage2)
+}
+
+' ═══════════════════════════════════════════════════════════
+' ROW 1: BUILDER & PROTOTYPE | TEMPLATE METHOD WORKFLOW
+' ═══════════════════════════════════════════════════════════
+package "part6_builder_prototype" as p6 {
+    class CustomOrder {
+        - customerName : String
+        - baseDish : String
+        - size : String
+        - toppings : List<String>
+        - sideDrink : String
+        - spiceLevel : String
+        - specialInstructions : String
+        - basePrice : double
+        + calculateSubtotal() : double
+    }
+
+    class CustomOrderBuilder {
+        + setCustomerName(name : String) : CustomOrderBuilder
+        + setBaseDish(dish, price) : CustomOrderBuilder
+        + setSize(size : String) : CustomOrderBuilder
+        + addTopping(topping : String) : CustomOrderBuilder
+        + setSideDrink(drink : String) : CustomOrderBuilder
+        + setSpiceLevel(spice : String) : CustomOrderBuilder
+        + setSpecialInstructions(notes : String) : CustomOrderBuilder
+        + build() : CustomOrder
+    }
+
+    class MealDirector {
+        + constructBurgerCombo(customer : String) : CustomOrder
+        + constructFitnessMeal(customer : String) : CustomOrder
+        + constructPartyFeast(customer : String) : CustomOrder
+    }
+
+    interface OrderPrototype {
+        + cloneOrder() : OrderPrototype
+    }
+
+    class ReorderableMeal implements OrderPrototype {
+        - originalOrderId : String
+        - customerName : String
+        - mealName : String
+        - price : double
+        - addons : List<String>
+        - deliveryAddress : String
+        + ReorderableMeal(target : ReorderableMeal)
+        + cloneOrder() : ReorderableMeal
+        + addAddon(addon : String) : void
+    }
+
+    class OrderRegistry {
+        - prototypes : Map<String, ReorderableMeal>
+        + registerPrototype(key, meal) : void
+        + getClone(key) : ReorderableMeal
+    }
+
+    MealDirector ..> CustomOrderBuilder : drives
+    CustomOrderBuilder ..> CustomOrder : builds
+    OrderRegistry o--> "*" ReorderableMeal : manages archetypes
+}
+
+package "part7_template_method" as p7 {
+    abstract class OrderFulfillmentWorkflow {
+        + fulfillOrder(orderId, customer, item, amount) : void
+        + {abstract} getWorkflowName() : String
+        # verifyOrder(orderId, customer, amount) : void
+        # prepareFood(item) : void
+        # qualityCheck() : void
+        # {abstract} packageOrder() : void
+        # {abstract} handoverOrder() : void
+        # sendCompletionAlert(customer) : void
+    }
+
+    class DeliveryFulfillmentWorkflow extends OrderFulfillmentWorkflow {
+        + getWorkflowName() : String
+        # packageOrder() : void
+        # handoverOrder() : void
+    }
+
+    class TakeawayFulfillmentWorkflow extends OrderFulfillmentWorkflow {
+        + getWorkflowName() : String
+        # packageOrder() : void
+        # handoverOrder() : void
+    }
+
+    class DineInFulfillmentWorkflow extends OrderFulfillmentWorkflow {
+        + getWorkflowName() : String
+        # packageOrder() : void
+        # handoverOrder() : void
+    }
+}
+
+' ═══════════════════════════════════════════════════════════
+' ROW 2: STRATEGY PRICING | MEMENTO TIME-TRAVEL
+' ═══════════════════════════════════════════════════════════
+package "part8_strategy" as p8 {
+    interface DiscountStrategy {
+        + applyDiscount(subtotal : double) : double
+        + getStrategyName() : String
+    }
+
+    class PercentageDiscountStrategy implements DiscountStrategy {
+        - percentage : double
+        + applyDiscount(subtotal : double) : double
+        + getStrategyName() : String
+    }
+
+    class FlatDiscountStrategy implements DiscountStrategy {
+        - flatAmount : double
+        + applyDiscount(subtotal : double) : double
+        + getStrategyName() : String
+    }
+
+    class LoyaltyTierStrategy implements DiscountStrategy {
+        - tier : String
+        + applyDiscount(subtotal : double) : double
+        + getStrategyName() : String
+    }
+
+    class NoDiscountStrategy implements DiscountStrategy {
+        + applyDiscount(subtotal : double) : double
+        + getStrategyName() : String
+    }
+
+    class PricingContext {
+        - strategy : DiscountStrategy
+        + setStrategy(strategy : DiscountStrategy) : void
+        + calculateFinalPrice(subtotal : double) : double
+    }
+
+    PricingContext o--> "1" DiscountStrategy : executes
+}
+
+package "part9_memento" as p9 {
+    class OrderMemento {
+        - cartItems : List<String>
+        - subtotal : double
+        - timestamp : String
+        + getCartItems() : List<String>
+        + getSubtotal() : double
+        + getTimestamp() : String
+    }
+
+    class CartOriginator {
+        - items : List<String>
+        - subtotal : double
+        + addItem(name : String, price : double) : void
+        + saveStateToMemento() : OrderMemento
+        + restoreStateFromMemento(memento : OrderMemento) : void
+        + getItems() : List<String>
+        + getSubtotal() : double
+    }
+
+    class CartCaretaker {
+        - undoStack : Deque<OrderMemento>
+        - redoStack : Deque<OrderMemento>
+        + saveState(originator : CartOriginator) : void
+        + undo(originator : CartOriginator) : boolean
+        + redo(originator : CartOriginator) : boolean
+    }
+
+    CartOriginator ..> OrderMemento : creates / restores
+    CartCaretaker o--> "*" OrderMemento : stacks
+    CartCaretaker ..> CartOriginator : operates on
+}
+
+' ═══════════════════════════════════════════════════════════
+' SERVER DISPATCH & INTER-PACKAGE RELATIONS
+' ═══════════════════════════════════════════════════════════
+QuickBiteServer ..> MealDirector : constructs combo (/api/stage2)
+QuickBiteServer ..> OrderRegistry : clones archetype
+QuickBiteServer ..> OrderFulfillmentWorkflow : executes workflow
+QuickBiteServer ..> PricingContext : calculates pricing
+QuickBiteServer ..> CartCaretaker : manages undo/redo
+
+p6 ..> p8 : calculates discounted pricing
+p6 ..> p9 : populates cart state
+
+' ═══════════════════════════════════════════════════════════
+' STRICT 2x2 GRID CONSTRAINTS (CLASS-LEVEL)
+' ═══════════════════════════════════════════════════════════
+QuickBiteServer -[hidden]down-> MealDirector
+CustomOrderBuilder -[hidden]right-> OrderFulfillmentWorkflow
+
+CustomOrder -[hidden]down-> PricingContext
+DineInFulfillmentWorkflow -[hidden]down-> CartCaretaker
+
+DiscountStrategy -[hidden]right-> CartOriginator
+
+@enduml
