@@ -1378,6 +1378,78 @@
       }
     }
 
+
+    /* -- STRATEGY LAB & SIMULATION MATRIX -- */
+    .strategy-matrix-container {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-height: 290px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .strategy-matrix-item {
+      background: #FFFFFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: all var(--dur-fast) ease;
+      user-select: none;
+    }
+
+    .strategy-matrix-item:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .strategy-matrix-item.is-current-strategy {
+      background: #EFF6FF;
+      border-color: var(--blue);
+      box-shadow: 3px 3px 0 var(--blue);
+    }
+
+    .strat-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .strat-item-name {
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .strat-item-savings {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .strat-item-payable {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .strat-tuning-panel {
+      background: #FFFFFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
   </style>
 </head>
 <body>
@@ -1622,10 +1694,15 @@
                 </div>
               </div>
 
-              <!-- Sub-Box 2: Fulfillment & Strategy -->
+              <!-- Sub-Box 2: Fulfillment & Pricing Strategy -->
               <div class="config-sub-box">
-                <div class="config-sub-heading">2. Fulfillment & Strategy</div>
-                <div class="form-field">
+                <div class="config-sub-heading" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>2. Fulfillment & Strategy</span>
+                  <span class="brutal-badge" style="background: var(--blue); color: #fff; font-size: 0.72rem;">BEHAVIORAL</span>
+                </div>
+
+                <!-- Template Method Workflow Selector -->
+                <div class="form-field" style="margin-bottom: 12px;">
                   <label class="brutal-label" for="fulfillmentType">Fulfillment Workflow (Template Method)</label>
                   <select id="fulfillmentType" class="brutal-select">
                     <option value="DELIVERY" selected>Home Delivery (Thermal Insulated Seal + Live GPS)</option>
@@ -1633,15 +1710,29 @@
                     <option value="DINE_IN">Table Dine-In (Table Reservation + Waiter Service)</option>
                   </select>
                 </div>
-                <div class="form-field">
-                  <label class="brutal-label" for="discountType">Pricing Algorithm (Strategy)</label>
-                  <select id="discountType" class="brutal-select">
-                    <option value="LOYALTY" selected>VIP Gold Member Tier (25% OFF)</option>
-                    <option value="PERCENTAGE">Seasonal Promotion (15% OFF)</option>
-                    <option value="FLAT">Flat Voucher Discount (Rs. 100 OFF)</option>
-                    <option value="NONE">Standard Menu Pricing (0% OFF)</option>
-                  </select>
+
+                <!-- Hidden backward-compatible field -->
+                <input type="hidden" id="discountType" value="LOYALTY" />
+
+                <!-- Active Configured Pricing Strategy Card -->
+                <div id="activeStrategySummaryCard" class="active-meal-card" style="border-left: 6px solid var(--green);">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                    <div>
+                      <span id="activeStrategyBadge" class="brutal-badge" style="background: var(--green); color: #fff; font-size: 0.72rem; padding: 2px 6px;">STRATEGY: LOYALTY</span>
+                      <div id="activeStrategyTitle" class="active-meal-name">VIP Gold Member Tier (25% OFF)</div>
+                    </div>
+                    <div id="activeStrategySavings" class="active-meal-price" style="color: var(--green);">SAVE 25%</div>
+                  </div>
+                  <div id="activeStrategyDesc" class="active-meal-ingredients">
+                    PricingContext executes LoyaltyTierStrategy: Deducts 25% perk from current meal subtotal.
+                  </div>
                 </div>
+
+                <!-- Trigger Dynamic Strategy Lab Modal Button -->
+                <button type="button" class="brutal-btn brutal-btn-blue" style="width: 100%; font-size: 0.92rem; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff;" onclick="openStrategyModal()">
+                  <span>⚡</span>
+                  <span>CONFIGURE PRICING STRATEGY LAB</span>
+                </button>
               </div>
 
               <!-- Sub-Box 3: Memento State Controls -->
@@ -2041,6 +2132,259 @@
     </div>
   </div>
 
+  <!-- DYNAMIC PRICING STRATEGY LAB MODAL (GOF BEHAVIORAL PATTERN) -->
+  <div id="strategyModal" class="brutal-modal-backdrop" onclick="onStrategyBackdropClick(event)">
+    <div class="brutal-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="strategyModalTitle">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="background: var(--blue); color: #fff;">
+        <div class="modal-title-wrap">
+          <span style="font-size: 1.5rem;">⚡</span>
+          <h2 id="strategyModalTitle" class="modal-title" style="color: #fff;">DYNAMIC PRICING STRATEGY LAB</h2>
+          <span class="brutal-badge" style="background: #fff; color: var(--ink); font-size: 0.72rem;">STRATEGY DESIGN PATTERN</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeStrategyModal()">
+          <span>✖</span>
+          <span>CLOSE</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Two-Column Studio) -->
+      <div class="modal-content-grid">
+
+        <!-- Left Column: Strategy Simulation Matrix & Live Cost Ledger -->
+        <div class="modal-preview-col">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="brutal-badge" style="background: var(--purple); color: #fff; font-size: 0.75rem;">LIVE STRATEGY SIMULATION</span>
+            <span style="font-size: 0.72rem; color: #64748B; font-weight: 700;">REAL-TIME COMPARISON</span>
+          </div>
+
+          <!-- Strategy Comparative Matrix -->
+          <div id="strategyComparisonMatrix" class="strategy-matrix-container">
+            <!-- Dynamically populated comparison rows for all strategies -->
+          </div>
+
+          <!-- Live Pricing Ledger for Chosen Strategy -->
+          <div class="builder-pricing-box">
+            <div style="font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; margin-bottom: 8px; color: var(--ink);">
+              ACTIVE PRICING CONTEXT LEDGER
+            </div>
+            <div class="builder-cost-row">
+              <span>Order Subtotal:</span>
+              <span id="stratLedgerSubtotal">Rs. 565.00</span>
+            </div>
+            <div class="builder-cost-row" style="color: var(--green);">
+              <span id="stratLedgerDiscountName">Strategy Discount:</span>
+              <span id="stratLedgerDiscountAmount">-Rs. 141.25</span>
+            </div>
+            <div class="builder-total-row">
+              <span style="font-weight: 800; font-size: 0.95rem;">EFFECTIVE PAYABLE:</span>
+              <span id="stratLedgerPayable" class="builder-total-amount" style="color: var(--blue);">Rs. 423.75</span>
+            </div>
+          </div>
+
+          <!-- Architectural Pattern Callout Card -->
+          <div class="pattern-callout-pill" style="background: #EFF6FF; border-color: var(--blue);">
+            <div style="font-weight: 800; margin-bottom: 3px; color: #1E40AF;">
+              ⚡ GoF Strategy Pattern Architecture:
+            </div>
+            <div style="color: #1E3A8A;">
+              <strong>DiscountStrategy</strong> declares the algorithm interface (<code>calculateDiscount(subtotal)</code>). <strong>PricingContext</strong> maintains an interchangeable reference to the active concrete strategy, permitting runtime algorithm swaps with zero impact on order routing, regional taxes, or kitchen workflows.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Strategy Selectors & Parametric Configuration -->
+        <div class="modal-controls-col">
+
+          <!-- Step 1: Select Strategy Algorithm Family -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge" style="background: var(--blue);">STEP 1</span>
+              <span>Select Interchangeable Pricing Algorithm</span>
+            </div>
+            <div class="builder-pill-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+              <div id="stratPill_LOYALTY" class="builder-option-pill is-selected" onclick="selectStrategyType('LOYALTY')">
+                <span class="pill-title">👑 VIP Loyalty Tier</span>
+                <span class="pill-subtitle">Tiered perks (10%-40%)</span>
+              </div>
+              <div id="stratPill_PERCENTAGE" class="builder-option-pill" onclick="selectStrategyType('PERCENTAGE')">
+                <span class="pill-title">🏷️ Percentage Promo</span>
+                <span class="pill-subtitle">Campaign rate (10%-30%)</span>
+              </div>
+              <div id="stratPill_FLAT" class="builder-option-pill" onclick="selectStrategyType('FLAT')">
+                <span class="pill-title">🎟️ Flat Voucher</span>
+                <span class="pill-subtitle">Instant rebate (Rs. 50-150)</span>
+              </div>
+              <div id="stratPill_THRESHOLD" class="builder-option-pill" onclick="selectStrategyType('THRESHOLD')">
+                <span class="pill-title">⚖️ Spend Threshold</span>
+                <span class="pill-subtitle">Rs. 120 off Rs. 500+</span>
+              </div>
+              <div id="stratPill_HAPPY_HOUR" class="builder-option-pill" onclick="selectStrategyType('HAPPY_HOUR')">
+                <span class="pill-title">⚡ Flash Happy Hour</span>
+                <span class="pill-subtitle">20% off (max Rs. 150)</span>
+              </div>
+              <div id="stratPill_NONE" class="builder-option-pill" onclick="selectStrategyType('NONE')">
+                <span class="pill-title">🚫 Standard Menu</span>
+                <span class="pill-subtitle">0% markdown</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Parametric Strategy Tuning (Dynamic Panel) -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge" style="background: var(--blue);">STEP 2</span>
+              <span>Parametric Algorithm Tuning</span>
+            </div>
+
+            <!-- Panel A: Loyalty Tier Options -->
+            <div id="stratPanel_LOYALTY" class="strat-tuning-panel">
+              <label class="brutal-label">Select Customer Membership Tier:</label>
+              <div class="builder-pill-grid" style="margin-bottom: 10px;">
+                <div class="builder-option-pill" onclick="setLoyaltyTier('Silver Member', 10, this)">
+                  <span class="pill-title">🥈 Silver Member</span>
+                  <span class="pill-subtitle">10% Off perk</span>
+                </div>
+                <div class="builder-option-pill is-selected" onclick="setLoyaltyTier('Gold VIP Member', 25, this)">
+                  <span class="pill-title">🥇 Gold VIP Member</span>
+                  <span class="pill-subtitle">25% Off perk</span>
+                </div>
+                <div class="builder-option-pill" onclick="setLoyaltyTier('Platinum Elite Member', 40, this)">
+                  <span class="pill-title">💎 Platinum Elite</span>
+                  <span class="pill-subtitle">40% Off perk</span>
+                </div>
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtLoyaltyCardId" style="font-size: 0.76rem;">Member Pass ID:</label>
+                <input id="txtLoyaltyCardId" class="brutal-input" type="text" value="VIP-GOLD-8821" />
+              </div>
+            </div>
+
+            <!-- Panel B: Percentage Promo Options -->
+            <div id="stratPanel_PERCENTAGE" class="strat-tuning-panel" style="display: none;">
+              <label class="brutal-label">Select Promotional Percentage:</label>
+              <div class="builder-pill-grid" style="margin-bottom: 10px;">
+                <div class="builder-option-pill" onclick="setPromoPercentage(10, this)">
+                  <span class="pill-title">10% Flash</span>
+                  <span class="pill-subtitle">Light campaign</span>
+                </div>
+                <div class="builder-option-pill is-selected" onclick="setPromoPercentage(15, this)">
+                  <span class="pill-title">15% Seasonal</span>
+                  <span class="pill-subtitle">Default promo</span>
+                </div>
+                <div class="builder-option-pill" onclick="setPromoPercentage(20, this)">
+                  <span class="pill-title">20% Festive</span>
+                  <span class="pill-subtitle">Holiday special</span>
+                </div>
+                <div class="builder-option-pill" onclick="setPromoPercentage(30, this)">
+                  <span class="pill-title">30% Mega Sale</span>
+                  <span class="pill-subtitle">Clearance sale</span>
+                </div>
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtPromoCampaign" style="font-size: 0.76rem;">Campaign Tag:</label>
+                <input id="txtPromoCampaign" class="brutal-input" type="text" value="SPRING_FESTIVAL_15" />
+              </div>
+            </div>
+
+            <!-- Panel C: Flat Voucher Options -->
+            <div id="stratPanel_FLAT" class="strat-tuning-panel" style="display: none;">
+              <label class="brutal-label">Select Voucher Value:</label>
+              <div class="builder-pill-grid" style="margin-bottom: 10px;">
+                <div class="builder-option-pill" onclick="setFlatVoucher(50, this)">
+                  <span class="pill-title">🎟️ Rs. 50 OFF</span>
+                  <span class="pill-subtitle">Snack coupon</span>
+                </div>
+                <div class="builder-option-pill is-selected" onclick="setFlatVoucher(100, this)">
+                  <span class="pill-title">🎟️ Rs. 100 OFF</span>
+                  <span class="pill-subtitle">Standard voucher</span>
+                </div>
+                <div class="builder-option-pill" onclick="setFlatVoucher(150, this)">
+                  <span class="pill-title">🎟️ Rs. 150 OFF</span>
+                  <span class="pill-subtitle">Mega rebate</span>
+                </div>
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtVoucherCode" style="font-size: 0.76rem;">Voucher Code:</label>
+                <input id="txtVoucherCode" class="brutal-input" type="text" value="FLAT100SAVINGS" />
+              </div>
+            </div>
+
+            <!-- Panel D: Spend Threshold Options -->
+            <div id="stratPanel_THRESHOLD" class="strat-tuning-panel" style="display: none;">
+              <label class="brutal-label">Cart Threshold Rule:</label>
+              <div class="builder-pill-grid" style="margin-bottom: 10px;">
+                <div class="builder-option-pill is-selected" onclick="setThresholdConfig(500, 120, this)">
+                  <span class="pill-title">Spend Rs. 500+</span>
+                  <span class="pill-subtitle">Get Rs. 120 OFF</span>
+                </div>
+                <div class="builder-option-pill" onclick="setThresholdConfig(400, 80, this)">
+                  <span class="pill-title">Spend Rs. 400+</span>
+                  <span class="pill-subtitle">Get Rs. 80 OFF</span>
+                </div>
+                <div class="builder-option-pill" onclick="setThresholdConfig(800, 200, this)">
+                  <span class="pill-title">Spend Rs. 800+</span>
+                  <span class="pill-subtitle">Get Rs. 200 OFF</span>
+                </div>
+              </div>
+              <div id="thresholdQualificationBanner" style="padding: 8px 12px; border-radius: var(--radius); font-size: 0.8rem; font-weight: 700; border: 2px solid var(--ink); margin-top: 6px;">
+                Checking cart eligibility...
+              </div>
+            </div>
+
+            <!-- Panel E: Flash Happy Hour Options -->
+            <div id="stratPanel_HAPPY_HOUR" class="strat-tuning-panel" style="display: none;">
+              <label class="brutal-label">Happy Hour Flash Markdown Rule:</label>
+              <div class="builder-pill-grid" style="margin-bottom: 10px;">
+                <div class="builder-option-pill is-selected" onclick="setHappyHourConfig(20, 150, this)">
+                  <span class="pill-title">⚡ 20% OFF</span>
+                  <span class="pill-subtitle">Max cap Rs. 150</span>
+                </div>
+                <div class="builder-option-pill" onclick="setHappyHourConfig(25, 200, this)">
+                  <span class="pill-title">⚡ 25% OFF</span>
+                  <span class="pill-subtitle">Max cap Rs. 200</span>
+                </div>
+              </div>
+              <div style="font-size: 0.76rem; color: #64748B;">
+                Happy Hour algorithm computes a percentage markdown clamped strictly at a protective maximum ceiling to prevent revenue erosion.
+              </div>
+            </div>
+
+            <!-- Panel F: Standard Menu Pricing (No Discount) -->
+            <div id="stratPanel_NONE" class="strat-tuning-panel" style="display: none;">
+              <div style="padding: 14px; background: #F8FAFC; border: 2px solid var(--ink); border-radius: var(--radius); font-size: 0.84rem; color: #475569;">
+                Standard baseline pricing: Computes order subtotal with zero promotional deduction.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.1rem;">⚡</span>
+          <span id="strategyModalFooterSummary" style="font-size: 0.86rem; font-weight: 700; color: #1E293B;">
+            Active Strategy: LoyaltyTierStrategy (Gold VIP 25% OFF)
+          </span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="brutal-btn" style="padding: 10px 18px;" onclick="closeStrategyModal()">
+            CANCEL
+          </button>
+          <button type="button" class="brutal-btn brutal-btn-blue" style="padding: 10px 22px; font-weight: 800; color: #fff;" onclick="applyStrategyToPipeline()">
+            ⚡ APPLY STRATEGY TO PIPELINE
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Local Motion Bundle & Heavy Motion Wrapper -->
   <script src="libs/motion.js"></script>
   <script src="components/brutal-motion.js"></script>
@@ -2048,6 +2392,283 @@
   <script>
 
     // -------------------------------------------------------------
+    
+    // -------------------------------------------------------------
+    // Strategy Pattern Custom State & Dynamic Lab
+    // -------------------------------------------------------------
+    let currentStrategyConfig = {
+      type: 'LOYALTY',
+      loyaltyTierName: 'QuickBite Gold VIP',
+      loyaltyTierRate: 25.0,
+      discountPercentage: 15.0,
+      flatVoucherAmount: 100.0,
+      thresholdAmount: 500.0,
+      thresholdDiscount: 120.0,
+      happyHourPercent: 20.0,
+      happyHourCap: 150.0
+    };
+
+    function getActiveOrderSubtotal() {
+      if (typeof currentMealBuild !== 'undefined') {
+        const baseScaled = Math.round(currentMealBuild.rawBasePrice * currentMealBuild.sizeMultiplier);
+        const topTotal = currentMealBuild.toppings.reduce((sum, t) => sum + t.price, 0);
+        return currentMealBuild.isCloneFromPrototype ? currentMealBuild.basePrice : (baseScaled + topTotal + currentMealBuild.sidePrice);
+      }
+      return 565.0;
+    }
+
+    function openStrategyModal() {
+      const modal = document.getElementById('strategyModal');
+      if (modal) {
+        modal.classList.add('is-open');
+        updateStrategySimulationMatrix();
+      }
+    }
+
+    function closeStrategyModal() {
+      const modal = document.getElementById('strategyModal');
+      if (modal) {
+        modal.classList.remove('is-open');
+      }
+    }
+
+    function onStrategyBackdropClick(e) {
+      if (e.target && e.target.id === 'strategyModal') {
+        closeStrategyModal();
+      }
+    }
+
+    function selectStrategyType(type) {
+      currentStrategyConfig.type = type;
+
+      // Update pills
+      document.querySelectorAll('#strategyModal .builder-option-pill').forEach(p => {
+        if (p.id && p.id.startsWith('stratPill_')) {
+          p.classList.remove('is-selected');
+        }
+      });
+      const activePill = document.getElementById(`stratPill_${type}`);
+      if (activePill) activePill.classList.add('is-selected');
+
+      // Update panels
+      const panels = ['LOYALTY', 'PERCENTAGE', 'FLAT', 'THRESHOLD', 'HAPPY_HOUR', 'NONE'];
+      panels.forEach(p => {
+        const el = document.getElementById(`stratPanel_${p}`);
+        if (el) el.style.display = p === type ? 'block' : 'none';
+      });
+
+      updateStrategySimulationMatrix();
+    }
+
+    function setLoyaltyTier(tier, rate, el) {
+      currentStrategyConfig.loyaltyTierName = `QuickBite ${tier}`;
+      currentStrategyConfig.loyaltyTierRate = rate;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      updateStrategySimulationMatrix();
+    }
+
+    function setPromoPercentage(pct, el) {
+      currentStrategyConfig.discountPercentage = pct;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      updateStrategySimulationMatrix();
+    }
+
+    function setFlatVoucher(amt, el) {
+      currentStrategyConfig.flatVoucherAmount = amt;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      updateStrategySimulationMatrix();
+    }
+
+    function setThresholdConfig(thresh, disc, el) {
+      currentStrategyConfig.thresholdAmount = thresh;
+      currentStrategyConfig.thresholdDiscount = disc;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      updateStrategySimulationMatrix();
+    }
+
+    function setHappyHourConfig(pct, cap, el) {
+      currentStrategyConfig.happyHourPercent = pct;
+      currentStrategyConfig.happyHourCap = cap;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      updateStrategySimulationMatrix();
+    }
+
+    function updateStrategySimulationMatrix() {
+      const subtotal = getActiveOrderSubtotal();
+      const container = document.getElementById('strategyComparisonMatrix');
+
+      // Compute discounts under every algorithm
+      const loyaltyDisc = (subtotal * currentStrategyConfig.loyaltyTierRate) / 100.0;
+      const percentDisc = (subtotal * currentStrategyConfig.discountPercentage) / 100.0;
+      const flatDisc = Math.min(currentStrategyConfig.flatVoucherAmount, subtotal);
+      const threshDisc = subtotal >= currentStrategyConfig.thresholdAmount ? Math.min(currentStrategyConfig.thresholdDiscount, subtotal) : 0.0;
+      const happyDisc = Math.min((subtotal * currentStrategyConfig.happyHourPercent) / 100.0, currentStrategyConfig.happyHourCap);
+      const noneDisc = 0.0;
+
+      const strategies = [
+        { type: 'LOYALTY', name: `👑 VIP Loyalty (${currentStrategyConfig.loyaltyTierRate}%)`, disc: loyaltyDisc, tag: 'LOYALTY' },
+        { type: 'PERCENTAGE', name: `🏷️ Promo Campaign (${currentStrategyConfig.discountPercentage}%)`, disc: percentDisc, tag: 'CAMPAIGN' },
+        { type: 'FLAT', name: `🎟️ Flat Voucher (Rs. ${currentStrategyConfig.flatVoucherAmount})`, disc: flatDisc, tag: 'VOUCHER' },
+        { type: 'THRESHOLD', name: `⚖️ Spend Rs. ${currentStrategyConfig.thresholdAmount}+ Rebate`, disc: threshDisc, tag: 'BULK' },
+        { type: 'HAPPY_HOUR', name: `⚡ Happy Hour (${currentStrategyConfig.happyHourPercent}% Cap Rs. ${currentStrategyConfig.happyHourCap})`, disc: happyDisc, tag: 'FLASH' },
+        { type: 'NONE', name: `🚫 Standard Menu (0%)`, disc: noneDisc, tag: 'BASELINE' }
+      ];
+
+      if (container) {
+        container.innerHTML = strategies.map(s => {
+          const isCurrent = s.type === currentStrategyConfig.type;
+          const payable = Math.max(0, subtotal - s.disc);
+          return `
+            <div class="strategy-matrix-item ${isCurrent ? 'is-current-strategy' : ''}" onclick="selectStrategyType('${s.type}')">
+              <div class="strat-item-info">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="strat-item-name">${s.name}</span>
+                  ${isCurrent ? '<span class="brutal-badge" style="background:var(--blue); color:#fff; font-size:0.65rem; padding:1px 5px;">ACTIVE</span>' : ''}
+                </div>
+                <span class="strat-item-savings">${s.disc > 0 ? `Saves Rs. ${s.disc.toFixed(2)}` : 'No markdown'}</span>
+              </div>
+              <div class="strat-item-payable">
+                Rs. ${payable.toFixed(2)}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Update Ledger
+      let activeDisc = 0;
+      let stratLabel = '';
+      if (currentStrategyConfig.type === 'LOYALTY') {
+        activeDisc = loyaltyDisc;
+        stratLabel = `${currentStrategyConfig.loyaltyTierName} (${currentStrategyConfig.loyaltyTierRate}% OFF)`;
+      } else if (currentStrategyConfig.type === 'PERCENTAGE') {
+        activeDisc = percentDisc;
+        stratLabel = `Promotional Markdown (${currentStrategyConfig.discountPercentage}% OFF)`;
+      } else if (currentStrategyConfig.type === 'FLAT') {
+        activeDisc = flatDisc;
+        stratLabel = `Flat Voucher (Rs. ${currentStrategyConfig.flatVoucherAmount} OFF)`;
+      } else if (currentStrategyConfig.type === 'THRESHOLD') {
+        activeDisc = threshDisc;
+        stratLabel = `Spend Threshold (Rs. ${currentStrategyConfig.thresholdDiscount} OFF)`;
+      } else if (currentStrategyConfig.type === 'HAPPY_HOUR') {
+        activeDisc = happyDisc;
+        stratLabel = `Happy Hour Flash (${currentStrategyConfig.happyHourPercent}% OFF)`;
+      } else {
+        activeDisc = 0;
+        stratLabel = 'Standard Menu Pricing (0% OFF)';
+      }
+
+      const netPayable = Math.max(0, subtotal - activeDisc);
+
+      const elSubtotal = document.getElementById('stratLedgerSubtotal');
+      if (elSubtotal) elSubtotal.textContent = `Rs. ${subtotal.toFixed(2)}`;
+
+      const elDiscName = document.getElementById('stratLedgerDiscountName');
+      if (elDiscName) elDiscName.textContent = `Discount (${stratLabel}):`;
+
+      const elDiscAmount = document.getElementById('stratLedgerDiscountAmount');
+      if (elDiscAmount) elDiscAmount.textContent = `-Rs. ${activeDisc.toFixed(2)}`;
+
+      const elPayable = document.getElementById('stratLedgerPayable');
+      if (elPayable) elPayable.textContent = `Rs. ${netPayable.toFixed(2)}`;
+
+      const elSummary = document.getElementById('strategyModalFooterSummary');
+      if (elSummary) elSummary.textContent = `Active Strategy: ${stratLabel} -> Saves Rs. ${activeDisc.toFixed(2)}`;
+
+      // Update threshold banner if visible
+      const threshBanner = document.getElementById('thresholdQualificationBanner');
+      if (threshBanner) {
+        if (subtotal >= currentStrategyConfig.thresholdAmount) {
+          threshBanner.style.background = '#DCFCE7';
+          threshBanner.style.color = '#166534';
+          threshBanner.textContent = `✓ Qualified! Current subtotal Rs. ${subtotal.toFixed(2)} qualifies for Rs. ${currentStrategyConfig.thresholdDiscount} instant deduction!`;
+        } else {
+          threshBanner.style.background = '#FEE2E2';
+          threshBanner.style.color = '#991B1B';
+          const needed = (currentStrategyConfig.thresholdAmount - subtotal).toFixed(2);
+          threshBanner.textContent = `⚠️ Cart subtotal Rs. ${subtotal.toFixed(2)} is Rs. ${needed} short of qualifying for this threshold rebate.`;
+        }
+      }
+    }
+
+    function applyStrategyToPipeline() {
+      // Sync hidden input for backward compatibility
+      const hiddenInput = document.getElementById('discountType');
+      if (hiddenInput) hiddenInput.value = currentStrategyConfig.type;
+
+      updateStrategyMainSummaryCard();
+      closeStrategyModal();
+
+      let label = currentStrategyConfig.type;
+      if (currentStrategyConfig.type === 'LOYALTY') label = `${currentStrategyConfig.loyaltyTierName} (${currentStrategyConfig.loyaltyTierRate}%)`;
+      else if (currentStrategyConfig.type === 'PERCENTAGE') label = `Promotional Markdown (${currentStrategyConfig.discountPercentage}%)`;
+      else if (currentStrategyConfig.type === 'FLAT') label = `Flat Voucher (Rs. ${currentStrategyConfig.flatVoucherAmount})`;
+      else if (currentStrategyConfig.type === 'THRESHOLD') label = `Threshold Rebate (Rs. ${currentStrategyConfig.thresholdDiscount})`;
+      else if (currentStrategyConfig.type === 'HAPPY_HOUR') label = `Happy Hour Flash (${currentStrategyConfig.happyHourPercent}%)`;
+      else label = 'Standard Menu Pricing';
+
+      appendLog('STRATEGY', 'log-badge-gateway', `Swapped pricing algorithm in PricingContext to: ${label}.`);
+    }
+
+    function updateStrategyMainSummaryCard() {
+      const titleEl = document.getElementById('activeStrategyTitle');
+      const badgeEl = document.getElementById('activeStrategyBadge');
+      const savingsEl = document.getElementById('activeStrategySavings');
+      const descEl = document.getElementById('activeStrategyDesc');
+
+      if (!titleEl) return;
+
+      const subtotal = getActiveOrderSubtotal();
+
+      if (currentStrategyConfig.type === 'LOYALTY') {
+        badgeEl.textContent = 'STRATEGY: LOYALTY TIER';
+        badgeEl.style.background = 'var(--purple)';
+        titleEl.textContent = `${currentStrategyConfig.loyaltyTierName} (${currentStrategyConfig.loyaltyTierRate}% OFF)`;
+        savingsEl.textContent = `SAVE ${currentStrategyConfig.loyaltyTierRate}%`;
+        const saving = ((subtotal * currentStrategyConfig.loyaltyTierRate) / 100).toFixed(2);
+        descEl.textContent = `PricingContext executes LoyaltyTierStrategy: Deducts Rs. ${saving} based on VIP tier perks.`;
+      } else if (currentStrategyConfig.type === 'PERCENTAGE') {
+        badgeEl.textContent = 'STRATEGY: PERCENTAGE PROMO';
+        badgeEl.style.background = 'var(--orange)';
+        titleEl.textContent = `Promotional Campaign (${currentStrategyConfig.discountPercentage}% OFF)`;
+        savingsEl.textContent = `SAVE ${currentStrategyConfig.discountPercentage}%`;
+        const saving = ((subtotal * currentStrategyConfig.discountPercentage) / 100).toFixed(2);
+        descEl.textContent = `PricingContext executes PercentageDiscountStrategy: Deducts Rs. ${saving} festival campaign markdown.`;
+      } else if (currentStrategyConfig.type === 'FLAT') {
+        badgeEl.textContent = 'STRATEGY: FLAT VOUCHER';
+        badgeEl.style.background = 'var(--green)';
+        titleEl.textContent = `Flat Voucher Rebate (Rs. ${currentStrategyConfig.flatVoucherAmount} OFF)`;
+        savingsEl.textContent = `SAVE Rs. ${currentStrategyConfig.flatVoucherAmount}`;
+        descEl.textContent = `PricingContext executes FlatDiscountStrategy: Deducts fixed voucher amount of Rs. ${currentStrategyConfig.flatVoucherAmount}.`;
+      } else if (currentStrategyConfig.type === 'THRESHOLD') {
+        badgeEl.textContent = 'STRATEGY: THRESHOLD REBATE';
+        badgeEl.style.background = 'var(--blue)';
+        titleEl.textContent = `Threshold Incentive (Rs. ${currentStrategyConfig.thresholdDiscount} OFF)`;
+        const qualified = subtotal >= currentStrategyConfig.thresholdAmount;
+        savingsEl.textContent = qualified ? `SAVE Rs. ${currentStrategyConfig.thresholdDiscount}` : 'UNQUALIFIED';
+        descEl.textContent = qualified
+          ? `PricingContext executes ThresholdDiscountStrategy: Subtotal meets Rs. ${currentStrategyConfig.thresholdAmount}+ target.`
+          : `PricingContext executes ThresholdDiscountStrategy: Minimum spend target Rs. ${currentStrategyConfig.thresholdAmount} not met.`;
+      } else if (currentStrategyConfig.type === 'HAPPY_HOUR') {
+        badgeEl.textContent = 'STRATEGY: FLASH HAPPY HOUR';
+        badgeEl.style.background = 'var(--pink)';
+        titleEl.textContent = `Happy Hour Flash (${currentStrategyConfig.happyHourPercent}% OFF)`;
+        savingsEl.textContent = `SAVE ${currentStrategyConfig.happyHourPercent}%`;
+        descEl.textContent = `PricingContext executes HappyHourDiscountStrategy: ${currentStrategyConfig.happyHourPercent}% markdown capped at Rs. ${currentStrategyConfig.happyHourCap}.`;
+      } else {
+        badgeEl.textContent = 'STRATEGY: BASELINE MENU';
+        badgeEl.style.background = 'var(--ink)';
+        titleEl.textContent = 'Standard Menu Pricing (0% OFF)';
+        savingsEl.textContent = '0% OFF';
+        descEl.textContent = 'PricingContext executes NoDiscountStrategy: Baseline menu pricing without promotional markdown.';
+      }
+    }
+
     // Builder & Prototype Custom State
     // -------------------------------------------------------------
     let currentMealBuild = {
@@ -2555,6 +3176,9 @@
         if (typeof cloneAndApplyPrototype === 'function') {
           cloneAndApplyPrototype();
         }
+        if (typeof selectStrategyType === \'function\') {
+          selectStrategyType(\'LOYALTY\');
+        }
       }
     }
 
@@ -2711,7 +3335,16 @@
         customerName: document.getElementById('customerName')?.value || 'Aman Gupta',
         mealPreset: document.getElementById('mealPreset')?.value || currentMealBuild.baseDish,
         fulfillmentType: document.getElementById('fulfillmentType').value,
-        discountType: document.getElementById('discountType').value,
+        discountType: currentStrategyConfig.type,
+        strategy: currentStrategyConfig.type,
+        loyaltyTierName: currentStrategyConfig.loyaltyTierName,
+        loyaltyTierRate: currentStrategyConfig.loyaltyTierRate,
+        discountPercentage: currentStrategyConfig.discountPercentage,
+        flatVoucherAmount: currentStrategyConfig.flatVoucherAmount,
+        thresholdAmount: currentStrategyConfig.thresholdAmount,
+        thresholdDiscount: currentStrategyConfig.thresholdDiscount,
+        happyHourPercent: currentStrategyConfig.happyHourPercent,
+        happyHourCap: currentStrategyConfig.happyHourCap,
         quantity: parseInt(document.getElementById('quantity').value) || 1,
         cartAction: document.getElementById('cartAction').value,
         

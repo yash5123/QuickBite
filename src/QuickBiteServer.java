@@ -255,6 +255,16 @@ public class QuickBiteServer {
             boolean saveAsProto    = "true".equalsIgnoreCase(jsonString(body, "saveAsPrototype"));
             String protoName       = jsonString(body, "prototypeName");
 
+            // Strategy Pattern parameters (from Strategy Lab)
+            String loyaltyTierName    = jsonString(body, "loyaltyTierName");
+            double loyaltyTierRate    = jsonDouble(body, "loyaltyTierRate");
+            double discountPercentage = jsonDouble(body, "discountPercentage");
+            double flatVoucherAmount  = jsonDouble(body, "flatVoucherAmount");
+            double thresholdAmount    = jsonDouble(body, "thresholdAmount");
+            double thresholdDiscount  = jsonDouble(body, "thresholdDiscount");
+            double happyHourPercent   = jsonDouble(body, "happyHourPercent");
+            double happyHourCap       = jsonDouble(body, "happyHourCap");
+
             // Capture System.out
             PrintStream originalOut = System.out;
             ByteArrayOutputStream capture = new ByteArrayOutputStream();
@@ -368,19 +378,32 @@ public class QuickBiteServer {
                     }
                 }
 
-                // 3. Strategy Pattern (Dynamic Discounts)
-                System.out.println("\n=== [STRATEGY PATTERN] Calculating Discounts ===");
+                // 3. Strategy Pattern (Dynamic Pricing Strategy Algorithms)
+                System.out.println("\n=== [STRATEGY PATTERN] Calculating Discounts via PricingContext ===");
                 PricingContext pricingContext = new PricingContext();
                 DiscountStrategy strategy;
-                if ("FLAT".equalsIgnoreCase(strategyType)) {
-                    strategy = new FlatDiscountStrategy(60.0);
-                } else if ("PERCENT".equalsIgnoreCase(strategyType)) {
-                    strategy = new PercentageDiscountStrategy(15.0);
+                if ("FLAT".equalsIgnoreCase(strategyType) || "VOUCHER".equalsIgnoreCase(strategyType)) {
+                    double flatAmt = flatVoucherAmount > 0 ? flatVoucherAmount : 100.0;
+                    strategy = new FlatDiscountStrategy(flatAmt);
+                } else if ("PERCENT".equalsIgnoreCase(strategyType) || "PERCENTAGE".equalsIgnoreCase(strategyType)) {
+                    double pct = discountPercentage > 0 ? discountPercentage : 15.0;
+                    strategy = new PercentageDiscountStrategy(pct);
                 } else if ("LOYALTY".equalsIgnoreCase(strategyType)) {
-                    strategy = new LoyaltyTierStrategy("QuickBite Gold VIP", 25.0);
+                    String tier = loyaltyTierName.isEmpty() ? "QuickBite Gold VIP" : loyaltyTierName;
+                    double rate = loyaltyTierRate > 0 ? loyaltyTierRate : 25.0;
+                    strategy = new LoyaltyTierStrategy(tier, rate);
+                } else if ("THRESHOLD".equalsIgnoreCase(strategyType)) {
+                    double thresh = thresholdAmount > 0 ? thresholdAmount : 500.0;
+                    double rebate = thresholdDiscount > 0 ? thresholdDiscount : 120.0;
+                    strategy = new ThresholdDiscountStrategy(thresh, rebate);
+                } else if ("HAPPY_HOUR".equalsIgnoreCase(strategyType) || "FLASH".equalsIgnoreCase(strategyType)) {
+                    double hhPct = happyHourPercent > 0 ? happyHourPercent : 20.0;
+                    double hhCap = happyHourCap > 0 ? happyHourCap : 150.0;
+                    strategy = new HappyHourDiscountStrategy(hhPct, hhCap);
                 } else {
                     strategy = new NoDiscountStrategy();
                 }
+
                 pricingContext.setStrategy(strategy);
                 strategyName = strategy.getStrategyName();
                 payable = pricingContext.computePayable(subtotal);
