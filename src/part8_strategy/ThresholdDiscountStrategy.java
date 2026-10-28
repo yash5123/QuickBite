@@ -43,3 +43,4 @@ public class ThresholdDiscountStrategy implements DiscountStrategy {
         return discountAmount;
     }
 }
+

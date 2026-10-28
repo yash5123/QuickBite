@@ -410,15 +410,19 @@ public class QuickBiteServer {
                 discount = subtotal - payable;
 
                 // 4. Template Method Pattern (Order Fulfillment)
-                System.out.println("\n=== [TEMPLATE METHOD PATTERN] Kitchen Fulfillment ===");
+                System.out.println("\n=== [TEMPLATE METHOD PATTERN] Kitchen Fulfillment Lifecycle ===");
                 OrderFulfillmentWorkflow workflow;
-                if ("TAKEAWAY".equalsIgnoreCase(workflowType)) {
+                if ("TAKEAWAY".equalsIgnoreCase(workflowType) || "PICKUP".equalsIgnoreCase(workflowType)) {
                     workflow = new TakeawayFulfillmentWorkflow();
-                } else if ("DINE_IN".equalsIgnoreCase(workflowType)) {
+                } else if ("DINE_IN".equalsIgnoreCase(workflowType) || "TABLE".equalsIgnoreCase(workflowType)) {
                     workflow = new DineInFulfillmentWorkflow();
+                } else if ("DRIVE_THRU".equalsIgnoreCase(workflowType) || "DRIVETHRU".equalsIgnoreCase(workflowType)) {
+                    workflow = new DriveThruFulfillmentWorkflow();
                 } else {
                     workflow = new DeliveryFulfillmentWorkflow();
                 }
+                System.out.println("[TEMPLATE METHOD] Concrete Workflow Subclass: " + workflow.getClass().getSimpleName());
+                System.out.println("[TEMPLATE METHOD] Invariant sequence locked by base class: verify -> prepare -> inspect -> packageOrder() [Hook] -> handoverOrder() [Hook] -> alert");
                 workflowName = workflow.getWorkflowName();
                 workflow.fulfillOrder("QB-" + (int)(Math.random() * 900 + 100), customerName, dishName, payable);
 

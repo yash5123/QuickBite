@@ -38,3 +38,4 @@ public class HappyHourDiscountStrategy implements DiscountStrategy {
         return maxCap;
     }
 }
+

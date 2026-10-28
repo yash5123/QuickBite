@@ -1450,6 +1450,77 @@
       box-shadow: 2px 2px 0 var(--ink);
     }
 
+
+    /* -- TEMPLATE METHOD FULFILLMENT STUDIO -- */
+    .workflow-step-chain {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 310px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .workflow-step-node {
+      background: #FFFFFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      box-shadow: 2px 2px 0 var(--ink);
+      position: relative;
+    }
+
+    .workflow-step-node.is-hook-step {
+      background: #FEF9C3;
+      border-color: #854D0E;
+    }
+
+    .step-node-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #FFF;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .is-hook-step .step-node-num {
+      background: #B45309;
+    }
+
+    .step-node-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .step-node-title {
+      font-family: var(--font-display);
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .step-node-desc {
+      font-size: 0.74rem;
+      color: #475569;
+      line-height: 1.35;
+    }
+
   </style>
 </head>
 <body>
@@ -1694,28 +1765,39 @@
                 </div>
               </div>
 
-              <!-- Sub-Box 2: Fulfillment & Pricing Strategy -->
+                            <!-- Sub-Box 2: Fulfillment (Template Method) & Pricing Strategy -->
               <div class="config-sub-box">
                 <div class="config-sub-heading" style="display: flex; justify-content: space-between; align-items: center;">
                   <span>2. Fulfillment & Strategy</span>
                   <span class="brutal-badge" style="background: var(--blue); color: #fff; font-size: 0.72rem;">BEHAVIORAL</span>
                 </div>
 
-                <!-- Template Method Workflow Selector -->
-                <div class="form-field" style="margin-bottom: 12px;">
-                  <label class="brutal-label" for="fulfillmentType">Fulfillment Workflow (Template Method)</label>
-                  <select id="fulfillmentType" class="brutal-select">
-                    <option value="DELIVERY" selected>Home Delivery (Thermal Insulated Seal + Live GPS)</option>
-                    <option value="TAKEAWAY">Express Takeaway (Thermal Wrap + Counter Pick)</option>
-                    <option value="DINE_IN">Table Dine-In (Table Reservation + Waiter Service)</option>
-                  </select>
-                </div>
-
-                <!-- Hidden backward-compatible field -->
+                <!-- Hidden backward-compatible fields -->
+                <input type="hidden" id="fulfillmentType" value="DELIVERY" />
                 <input type="hidden" id="discountType" value="LOYALTY" />
 
+                <!-- Active Configured Template Method Workflow Card -->
+                <div id="activeWorkflowSummaryCard" class="active-meal-card" style="border-left: 6px solid var(--orange); margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                    <div>
+                      <span id="activeWorkflowBadge" class="brutal-badge" style="background: var(--orange); color: #fff; font-size: 0.72rem; padding: 2px 6px;">WORKFLOW: DELIVERY</span>
+                      <div id="activeWorkflowTitle" class="active-meal-name">Home Delivery Fulfillment Workflow</div>
+                    </div>
+                    <div id="activeWorkflowHookTag" class="active-meal-price" style="font-size: 0.78rem; color: #C2410C; background: #FFEDD5;">HOOKS OVERRIDDEN</div>
+                  </div>
+                  <div id="activeWorkflowDesc" class="active-meal-ingredients">
+                    Specializes Step 4 (Thermal Pouch & Ice-Pack) and Step 5 (Fleet Unit #7 Live GPS Dispatch).
+                  </div>
+                </div>
+
+                <!-- Trigger Dynamic Fulfillment Studio Modal Button -->
+                <button type="button" class="brutal-btn brutal-btn-orange" style="width: 100%; font-size: 0.92rem; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff; margin-bottom: 14px;" onclick="openTemplateModal()">
+                  <span>🚚</span>
+                  <span>CONFIGURE FULFILLMENT STUDIO</span>
+                </button>
+
                 <!-- Active Configured Pricing Strategy Card -->
-                <div id="activeStrategySummaryCard" class="active-meal-card" style="border-left: 6px solid var(--green);">
+                <div id="activeStrategySummaryCard" class="active-meal-card" style="border-left: 6px solid var(--green); margin-bottom: 8px;">
                   <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
                     <div>
                       <span id="activeStrategyBadge" class="brutal-badge" style="background: var(--green); color: #fff; font-size: 0.72rem; padding: 2px 6px;">STRATEGY: LOYALTY</span>
@@ -1729,7 +1811,7 @@
                 </div>
 
                 <!-- Trigger Dynamic Strategy Lab Modal Button -->
-                <button type="button" class="brutal-btn brutal-btn-blue" style="width: 100%; font-size: 0.92rem; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff;" onclick="openStrategyModal()">
+                <button type="button" class="brutal-btn brutal-btn-blue" style="width: 100%; font-size: 0.92rem; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff;" onclick="openStrategyModal()">
                   <span>⚡</span>
                   <span>CONFIGURE PRICING STRATEGY LAB</span>
                 </button>
@@ -2385,6 +2467,160 @@
     </div>
   </div>
 
+  <!-- KITCHEN FULFILLMENT LIFECYCLE STUDIO MODAL (TEMPLATE METHOD PATTERN) -->
+  <div id="templateModal" class="brutal-modal-backdrop" onclick="onTemplateBackdropClick(event)">
+    <div class="brutal-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="templateModalTitle">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="background: var(--orange); color: #fff;">
+        <div class="modal-title-wrap">
+          <span style="font-size: 1.5rem;">🚚</span>
+          <h2 id="templateModalTitle" class="modal-title" style="color: #fff;">KITCHEN FULFILLMENT LIFECYCLE STUDIO</h2>
+          <span class="brutal-badge" style="background: #fff; color: var(--ink); font-size: 0.72rem;">TEMPLATE METHOD PATTERN</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeTemplateModal()">
+          <span>✖</span>
+          <span>CLOSE</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Two-Column Studio) -->
+      <div class="modal-content-grid">
+
+        <!-- Left Column: Invariant 6-Step Workflow Lifecycle -->
+        <div class="modal-preview-col">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="brutal-badge" style="background: var(--yellow); font-size: 0.75rem;">INVARIANT 6-STEP PIPELINE</span>
+            <span style="font-size: 0.72rem; color: #64748B; font-weight: 700;">LIFECYCLE SKELETON</span>
+          </div>
+
+          <!-- Step Chain Flowchart -->
+          <div id="workflowStepChain" class="workflow-step-chain">
+            <!-- Dynamically populated 6 steps with subclass hook highlights -->
+          </div>
+
+          <!-- GoF Architectural Pattern Callout Card -->
+          <div class="pattern-callout-pill" style="background: #FFF7ED; border-color: var(--orange);">
+            <div style="font-weight: 800; margin-bottom: 3px; color: #9A3412;">
+              🚚 GoF Template Method Architecture:
+            </div>
+            <div style="color: #7C2D12;">
+              <strong>OrderFulfillmentWorkflow</strong> defines the locked execution skeleton (<code>public final void fulfillOrder(...)</code>). Subclasses cannot break the sequence. Concrete subclasses specialize only the primitive hook methods (<code>packageOrder()</code> and <code>handoverOrder()</code>).
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Concrete Workflow Subclasses & Custom Parameters -->
+        <div class="modal-controls-col">
+
+          <!-- Step 1: Select Concrete Workflow Subclass -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge" style="background: var(--orange);">STEP 1</span>
+              <span>Select Concrete Workflow Subclass</span>
+            </div>
+            <div class="builder-pill-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+              <div id="wfPill_DELIVERY" class="builder-option-pill is-selected" onclick="selectWorkflowType('DELIVERY')">
+                <span class="pill-title">🛵 Home Delivery</span>
+                <span class="pill-subtitle">Thermal seal + GPS fleet</span>
+              </div>
+              <div id="wfPill_TAKEAWAY" class="builder-option-pill" onclick="selectWorkflowType('TAKEAWAY')">
+                <span class="pill-title">🛍️ Express Takeaway</span>
+                <span class="pill-subtitle">Kraft bag + Counter buzzer</span>
+              </div>
+              <div id="wfPill_DINE_IN" class="builder-option-pill" onclick="selectWorkflowType('DINE_IN')">
+                <span class="pill-title">🍽️ Table Dine-In</span>
+                <span class="pill-subtitle">Ceramic plating + Waiter</span>
+              </div>
+              <div id="wfPill_DRIVE_THRU" class="builder-option-pill" onclick="selectWorkflowType('DRIVE_THRU')">
+                <span class="pill-title">🚗 Drive-Thru Window</span>
+                <span class="pill-subtitle">Heat-chute + Window #2</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Specialized Subclass Parameters & Hook Preferences -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge" style="background: var(--orange);">STEP 2</span>
+              <span>Specialized Hook Parameters (packageOrder & handoverOrder)</span>
+            </div>
+
+            <!-- Panel A: Delivery Parameters -->
+            <div id="wfPanel_DELIVERY" class="strat-tuning-panel">
+              <div class="form-field">
+                <label class="brutal-label" for="txtWfFleetUnit">Step 5 Handover Fleet Dispatch:</label>
+                <input id="txtWfFleetUnit" class="brutal-input" type="text" value="QuickBite Fleet Unit #7 (Live GPS Tracking)" />
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtWfThermalSeal">Step 4 Packaging Thermal Seal:</label>
+                <input id="txtWfThermalSeal" class="brutal-input" type="text" value="Tamper-Evident Thermal Insulated Pouch with Ice-Pack" />
+              </div>
+            </div>
+
+            <!-- Panel B: Takeaway Parameters -->
+            <div id="wfPanel_TAKEAWAY" class="strat-tuning-panel" style="display: none;">
+              <div class="form-field">
+                <label class="brutal-label" for="txtWfCounterShelf">Step 5 Handover Pickup Counter:</label>
+                <input id="txtWfCounterShelf" class="brutal-input" type="text" value="Express Pickup Counter Shelf #3 (Buzzer BUZZ-409)" />
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtWfEcoBag">Step 4 Packaging Bag Type:</label>
+                <input id="txtWfEcoBag" class="brutal-input" type="text" value="Recyclable Brown Kraft Carry-Bag with Cutlery & Tissue" />
+              </div>
+            </div>
+
+            <!-- Panel C: Dine-In Parameters -->
+            <div id="wfPanel_DINE_IN" class="strat-tuning-panel" style="display: none;">
+              <div class="form-field">
+                <label class="brutal-label" for="txtWfTableNumber">Step 5 Handover Table Reservation:</label>
+                <input id="txtWfTableNumber" class="brutal-input" type="text" value="Reserved Table #14 (Piping-Hot Waiter Service)" />
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtWfCeramics">Step 4 Packaging Dinnerware:</label>
+                <input id="txtWfCeramics" class="brutal-input" type="text" value="Artisanal Ceramic Dinnerware with Fresh Parsley Garnish" />
+              </div>
+            </div>
+
+            <!-- Panel D: Drive-Thru Parameters -->
+            <div id="wfPanel_DRIVE_THRU" class="strat-tuning-panel" style="display: none;">
+              <div class="form-field">
+                <label class="brutal-label" for="txtWfDriveWindow">Step 5 Handover Express Window:</label>
+                <input id="txtWfDriveWindow" class="brutal-input" type="text" value="Express Window #2 Contactless Lane (Barcode Sensor Verified)" />
+              </div>
+              <div class="form-field" style="margin-bottom: 0;">
+                <label class="brutal-label" for="txtWfHeatChute">Step 4 Packaging Container:</label>
+                <input id="txtWfHeatChute" class="brutal-input" type="text" value="Rapid-Serve Thermal Heat-Chute Container with Condiments" />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.1rem;">🚚</span>
+          <span id="templateModalFooterSummary" style="font-size: 0.86rem; font-weight: 700; color: #1E293B;">
+            Active Workflow: DeliveryFulfillmentWorkflow (Overrides packageOrder & handoverOrder)
+          </span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="brutal-btn" style="padding: 10px 18px;" onclick="closeTemplateModal()">
+            CANCEL
+          </button>
+          <button type="button" class="brutal-btn brutal-btn-orange" style="padding: 10px 22px; font-weight: 800; color: #fff;" onclick="applyWorkflowToPipeline()">
+            🚚 APPLY WORKFLOW TO PIPELINE
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Local Motion Bundle & Heavy Motion Wrapper -->
   <script src="libs/motion.js"></script>
   <script src="components/brutal-motion.js"></script>
@@ -2393,6 +2629,217 @@
 
     // -------------------------------------------------------------
     
+    
+    // -------------------------------------------------------------
+    // Template Method Pattern Custom State & Fulfillment Studio
+    // -------------------------------------------------------------
+    let currentWorkflowConfig = {
+      type: 'DELIVERY',
+      name: 'Home Delivery Fulfillment Workflow',
+      fleetUnit: 'QuickBite Fleet Unit #7 (Live GPS Tracking)',
+      packagingSeal: 'Tamper-Evident Thermal Insulated Pouch with Ice-Pack',
+      counterShelf: 'Express Pickup Counter Shelf #3 (Buzzer BUZZ-409)',
+      bagType: 'Recyclable Brown Kraft Carry-Bag with Cutlery & Tissue',
+      tableNumber: 'Reserved Table #14 (Piping-Hot Waiter Service)',
+      ceramics: 'Artisanal Ceramic Dinnerware with Fresh Parsley Garnish',
+      driveWindow: 'Express Window #2 Contactless Lane (Barcode Sensor Verified)',
+      heatChute: 'Rapid-Serve Thermal Heat-Chute Container with Condiments'
+    };
+
+    function openTemplateModal() {
+      const modal = document.getElementById('templateModal');
+      if (modal) {
+        modal.classList.add('is-open');
+        updateWorkflowLifecycleDiagram();
+      }
+    }
+
+    function closeTemplateModal() {
+      const modal = document.getElementById('templateModal');
+      if (modal) {
+        modal.classList.remove('is-open');
+      }
+    }
+
+    function onTemplateBackdropClick(e) {
+      if (e.target && e.target.id === 'templateModal') {
+        closeTemplateModal();
+      }
+    }
+
+    function selectWorkflowType(type) {
+      currentWorkflowConfig.type = type;
+
+      const pills = ['DELIVERY', 'TAKEAWAY', 'DINE_IN', 'DRIVE_THRU'];
+      pills.forEach(p => {
+        const pillEl = document.getElementById(`wfPill_${p}`);
+        if (pillEl) pillEl.classList.remove('is-selected');
+        const panelEl = document.getElementById(`wfPanel_${p}`);
+        if (panelEl) panelEl.style.display = p === type ? 'block' : 'none';
+      });
+
+      const activePill = document.getElementById(`wfPill_${type}`);
+      if (activePill) activePill.classList.add('is-selected');
+
+      if (type === 'DELIVERY') currentWorkflowConfig.name = 'Home Delivery Fulfillment Workflow';
+      else if (type === 'TAKEAWAY') currentWorkflowConfig.name = 'Customer Takeaway / Pickup Workflow';
+      else if (type === 'DINE_IN') currentWorkflowConfig.name = 'Dine-In Table Service Workflow';
+      else if (type === 'DRIVE_THRU') currentWorkflowConfig.name = 'Drive-Thru Express Window Workflow';
+
+      updateWorkflowLifecycleDiagram();
+    }
+
+    function updateWorkflowLifecycleDiagram() {
+      const chainEl = document.getElementById('workflowStepChain');
+      if (!chainEl) return;
+
+      let step4Desc = '';
+      let step5Desc = '';
+      let subclassClass = 'DeliveryFulfillmentWorkflow';
+
+      if (currentWorkflowConfig.type === 'DELIVERY') {
+        subclassClass = 'DeliveryFulfillmentWorkflow';
+        step4Desc = 'Sealed in tamper-evident hot/cold thermal insulated pouch with ice-pack.';
+        step5Desc = 'Dispatched to QuickBite Delivery Partner (Fleet Unit #7, Live GPS tracking enabled).';
+      } else if (currentWorkflowConfig.type === 'TAKEAWAY') {
+        subclassClass = 'TakeawayFulfillmentWorkflow';
+        step4Desc = 'Packed into recyclable brown kraft carry-bag with cutlery and tissue set.';
+        step5Desc = 'Placed on Counter Shelf #3; pickup buzzer ticket display updated.';
+      } else if (currentWorkflowConfig.type === 'DINE_IN') {
+        subclassClass = 'DineInFulfillmentWorkflow';
+        step4Desc = 'Plated onto artisanal ceramic dinnerware with parsley garnish.';
+        step5Desc = 'Server delivered piping-hot tray directly to Table #14 with water refill.';
+      } else if (currentWorkflowConfig.type === 'DRIVE_THRU') {
+        subclassClass = 'DriveThruFulfillmentWorkflow';
+        step4Desc = 'Sealed in rapid-serve thermal heat-chute container with auto-dispensed condiments.';
+        step5Desc = 'Passed through Window #2 contactless lane; vehicle barcode sensor verified handoff.';
+      }
+
+      chainEl.innerHTML = `
+        <div class="workflow-step-node">
+          <div class="step-node-num">1</div>
+          <div class="step-node-content">
+            <div class="step-node-title">
+              <span>verifyOrder()</span>
+              <span class="brutal-badge" style="background:#E2E8F0; font-size:0.65rem;">INVARIANT (BASE)</span>
+            </div>
+            <div class="step-node-desc">Validates order credentials, total billing amount, and payment authorization.</div>
+          </div>
+        </div>
+
+        <div class="workflow-step-node">
+          <div class="step-node-num">2</div>
+          <div class="step-node-content">
+            <div class="step-node-title">
+              <span>prepareFood()</span>
+              <span class="brutal-badge" style="background:#E2E8F0; font-size:0.65rem;">INVARIANT (BASE)</span>
+            </div>
+            <div class="step-node-desc">Kitchen brigade cooks and customizes base dish, toppings, and beverage pairings.</div>
+          </div>
+        </div>
+
+        <div class="workflow-step-node">
+          <div class="step-node-num">3</div>
+          <div class="step-node-content">
+            <div class="step-node-title">
+              <span>qualityCheck()</span>
+              <span class="brutal-badge" style="background:#E2E8F0; font-size:0.65rem;">INVARIANT (BASE)</span>
+            </div>
+            <div class="step-node-desc">Head Chef passes temperature probe check and food safety compliance review.</div>
+          </div>
+        </div>
+
+        <div class="workflow-step-node is-hook-step">
+          <div class="step-node-num">4</div>
+          <div class="step-node-content">
+            <div class="step-node-title">
+              <span style="color:#9A3412;">packageOrder() [SPECIALIZED]</span>
+              <span class="brutal-badge" style="background:#FEF08A; color:#854D0E; font-size:0.65rem;">SUBCLASS HOOK</span>
+            </div>
+            <div class="step-node-desc" style="font-weight:600; color:#78350F;">${step4Desc}</div>
+          </div>
+        </div>
+
+        <div class="workflow-step-node is-hook-step">
+          <div class="step-node-num">5</div>
+          <div class="step-node-content">
+            <div class="step-node-title">
+              <span style="color:#9A3412;">handoverOrder() [SPECIALIZED]</span>
+              <span class="brutal-badge" style="background:#FEF08A; color:#854D0E; font-size:0.65rem;">SUBCLASS HOOK</span>
+            </div>
+            <div class="step-node-desc" style="font-weight:600; color:#78350F;">${step5Desc}</div>
+          </div>
+        </div>
+
+        <div class="workflow-step-node">
+          <div class="step-node-num">6</div>
+          <div class="step-node-content">
+            <div class="step-node-title">
+              <span>sendCompletionAlert()</span>
+              <span class="brutal-badge" style="background:#E2E8F0; font-size:0.65rem;">INVARIANT (BASE)</span>
+            </div>
+            <div class="step-node-desc">Multi-channel pub-sub broadcasts successful fulfillment event to Customer & Store.</div>
+          </div>
+        </div>
+      `;
+
+      const footerSummary = document.getElementById('templateModalFooterSummary');
+      if (footerSummary) {
+        footerSummary.textContent = `Active Workflow: ${subclassClass} (Specializes packageOrder & handoverOrder)`;
+      }
+    }
+
+    function applyWorkflowToPipeline() {
+      const hiddenInput = document.getElementById('fulfillmentType');
+      if (hiddenInput) hiddenInput.value = currentWorkflowConfig.type;
+
+      updateWorkflowMainSummaryCard();
+      closeTemplateModal();
+
+      let subclass = 'DeliveryFulfillmentWorkflow';
+      if (currentWorkflowConfig.type === 'TAKEAWAY') subclass = 'TakeawayFulfillmentWorkflow';
+      else if (currentWorkflowConfig.type === 'DINE_IN') subclass = 'DineInFulfillmentWorkflow';
+      else if (currentWorkflowConfig.type === 'DRIVE_THRU') subclass = 'DriveThruFulfillmentWorkflow';
+
+      appendLog('TEMPLATE', 'log-badge-fulfillment', `Selected concrete workflow: ${subclass} (Specializes Step 4 packaging & Step 5 handover).`);
+    }
+
+    function updateWorkflowMainSummaryCard() {
+      const titleEl = document.getElementById('activeWorkflowTitle');
+      const badgeEl = document.getElementById('activeWorkflowBadge');
+      const hookTagEl = document.getElementById('activeWorkflowHookTag');
+      const descEl = document.getElementById('activeWorkflowDesc');
+
+      if (!titleEl) return;
+
+      if (currentWorkflowConfig.type === 'DELIVERY') {
+        badgeEl.textContent = 'WORKFLOW: DELIVERY';
+        badgeEl.style.background = 'var(--orange)';
+        titleEl.textContent = 'Home Delivery Fulfillment Workflow';
+        hookTagEl.textContent = 'GPS FLEET DISPATCH';
+        descEl.textContent = 'DeliveryFulfillmentWorkflow specializes Step 4 (Thermal Insulation) & Step 5 (Live GPS Fleet Unit #7).';
+      } else if (currentWorkflowConfig.type === 'TAKEAWAY') {
+        badgeEl.textContent = 'WORKFLOW: TAKEAWAY';
+        badgeEl.style.background = 'var(--yellow)';
+        badgeEl.style.color = 'var(--ink)';
+        titleEl.textContent = 'Customer Takeaway / Pickup Workflow';
+        hookTagEl.textContent = 'COUNTER BUZZER';
+        descEl.textContent = 'TakeawayFulfillmentWorkflow specializes Step 4 (Kraft Carry-Bag) & Step 5 (Counter Shelf #3 Buzzer).';
+      } else if (currentWorkflowConfig.type === 'DINE_IN') {
+        badgeEl.textContent = 'WORKFLOW: DINE-IN';
+        badgeEl.style.background = 'var(--purple)';
+        titleEl.textContent = 'Dine-In Table Service Workflow';
+        hookTagEl.textContent = 'TABLE #14 SERVICE';
+        descEl.textContent = 'DineInFulfillmentWorkflow specializes Step 4 (Artisanal Ceramics) & Step 5 (Table #14 Server Tray).';
+      } else if (currentWorkflowConfig.type === 'DRIVE_THRU') {
+        badgeEl.textContent = 'WORKFLOW: DRIVE-THRU';
+        badgeEl.style.background = 'var(--blue)';
+        titleEl.textContent = 'Drive-Thru Express Window Workflow';
+        hookTagEl.textContent = 'EXPRESS WINDOW #2';
+        descEl.textContent = 'DriveThruFulfillmentWorkflow specializes Step 4 (Heat-Chute Seal) & Step 5 (Window #2 Barcode Handoff).';
+      }
+    }
+
     // -------------------------------------------------------------
     // Strategy Pattern Custom State & Dynamic Lab
     // -------------------------------------------------------------
@@ -3334,7 +3781,7 @@
       const payload = {
         customerName: document.getElementById('customerName')?.value || 'Aman Gupta',
         mealPreset: document.getElementById('mealPreset')?.value || currentMealBuild.baseDish,
-        fulfillmentType: document.getElementById('fulfillmentType').value,
+        fulfillmentType: currentWorkflowConfig.type || document.getElementById('fulfillmentType').value,
         discountType: currentStrategyConfig.type,
         strategy: currentStrategyConfig.type,
         loyaltyTierName: currentStrategyConfig.loyaltyTierName,
