@@ -40,7 +40,7 @@ public class QuickBiteServer {
         System.out.println("Fulfillment & Pricing API : POST /api/stage2 (or /api/phase2)");
     }
 
-    // ── GET / → serve public/ files (HTML, CSS, JS, libs) ────────────────
+    // -- GET / -> serve public/ files (HTML, CSS, JS, libs) ----------------
     static class StaticHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange ex) throws IOException {
@@ -88,7 +88,7 @@ public class QuickBiteServer {
         }
     }
 
-    // ── STAGE 1: POST /api/order → Order Gateway Pipeline ─────────────────
+    // -- STAGE 1: POST /api/order -> Order Gateway Pipeline -----------------
     static class OrderApiHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange ex) throws IOException {
@@ -201,7 +201,7 @@ public class QuickBiteServer {
         }
     }
 
-    // ── STAGE 2: POST /api/phase2 → Fulfillment & Pricing Pipeline ────────
+    // -- STAGE 2: POST /api/phase2 -> Fulfillment & Pricing Pipeline --------
     static class Phase2ApiHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange ex) throws IOException {
@@ -230,13 +230,30 @@ public class QuickBiteServer {
                 body = sb.toString();
             }
 
-            String customerName  = jsonString(body, "customerName");
+            String customerName    = jsonString(body, "customerName");
             if (customerName.isEmpty()) customerName = "Aman Gupta";
-            String preset        = jsonString(body, "preset");
-            String workflowType  = jsonString(body, "workflow");
-            String strategyType  = jsonString(body, "strategy");
-            boolean usePrototype = "true".equalsIgnoreCase(jsonString(body, "usePrototype"));
-            boolean undoCart     = "true".equalsIgnoreCase(jsonString(body, "undoCart"));
+            String preset          = jsonString(body, "preset");
+            if (preset.isEmpty()) preset = jsonString(body, "mealPreset");
+            String workflowType    = jsonString(body, "workflow");
+            if (workflowType.isEmpty()) workflowType = jsonString(body, "fulfillmentType");
+            String strategyType    = jsonString(body, "strategy");
+            if (strategyType.isEmpty()) strategyType = jsonString(body, "discountType");
+            boolean usePrototype   = "true".equalsIgnoreCase(jsonString(body, "usePrototype"));
+            boolean cloneFromProto = "true".equalsIgnoreCase(jsonString(body, "cloneFromPrototype"));
+            String prototypeKey    = jsonString(body, "prototypeKey");
+            boolean undoCart       = "true".equalsIgnoreCase(jsonString(body, "undoCart"));
+
+            // Custom Builder parameters (from 3D Customizer Modal)
+            boolean isCustomBuild  = "true".equalsIgnoreCase(jsonString(body, "isCustomBuild"));
+            String baseDish        = jsonString(body, "baseDish");
+            double basePrice       = jsonDouble(body, "basePrice");
+            String size            = jsonString(body, "size");
+            String toppingsStr     = jsonString(body, "toppings");
+            String sideDrink       = jsonString(body, "sideDrink");
+            String spiceLevel      = jsonString(body, "spiceLevel");
+            String instructions    = jsonString(body, "specialInstructions");
+            boolean saveAsProto    = "true".equalsIgnoreCase(jsonString(body, "saveAsPrototype"));
+            String protoName       = jsonString(body, "prototypeName");
 
             // Capture System.out
             PrintStream originalOut = System.out;
@@ -251,44 +268,104 @@ public class QuickBiteServer {
             String dishName = "";
             String strategyName = "";
             String workflowName = "";
+            String savedProtoKey = "";
 
             try {
-                // 1. Builder Pattern
-                System.out.println("=== [BUILDER PATTERN] Constructing Meal ===");
-                MealDirector director = new MealDirector();
-
-                if ("BURGER".equalsIgnoreCase(preset)) {
-                    order = director.constructBurgerCombo(customerName);
-                } else if ("FITNESS".equalsIgnoreCase(preset)) {
-                    order = director.constructFitnessMeal(customerName);
-                } else if ("FEAST".equalsIgnoreCase(preset)) {
-                    order = director.constructPartyFeast(customerName);
-                } else {
-                    order = new CustomOrderBuilder()
+                if (cloneFromProto) {
+                    // Prototype Pattern: 1-Click Deep Clone of Existing Archetype
+                    System.out.println("=== [PROTOTYPE PATTERN] 1-Click Archetype Reorder & Deep Clone ===");
+                    String key = prototypeKey.isEmpty() ? "BURGER_COMBO" : prototypeKey;
+                    ReorderableMeal cloned = OrderRegistry.getStaticClone(key);
+                    if (cloned != null) {
+                        cloned.setCustomerName(customerName);
+                        System.out.println("[PROTOTYPE] Retrieved prototype archetype: '" + key + "' (Deep Copy ID: " + cloned.getOriginalOrderId() + ")");
+                        System.out.println("[PROTOTYPE] Cloned target customer: " + customerName + " | Delivery: " + cloned.getDeliveryAddress());
+                        System.out.println("[PROTOTYPE] Base archetype add-ons: " + cloned.getAddons());
+                        cloned.addAddon("Chef Special Truffle Dip (Cloned Customization)");
+                        System.out.println("[PROTOTYPE] Injected independent modification without mutating original archetype: " + cloned);
+                        dishName = cloned.getMealName();
+                        subtotal = cloned.getPrice();
+                    } else {
+                        System.out.println("[PROTOTYPE] Prototype key '" + key + "' not found. Constructing default combo.");
+                        order = new MealDirector().constructBurgerCombo(customerName);
+                        dishName = order.getBaseDish() + " (" + order.getSize() + ")";
+                        subtotal = order.calculateSubtotal();
+                    }
+                } else if (isCustomBuild) {
+                    // Builder Pattern: Assemble piece-by-piece from 3D Customizer
+                    System.out.println("=== [BUILDER PATTERN] Constructing Custom Meal (KFC / Domino's Customizer) ===");
+                    CustomOrderBuilder builder = new CustomOrderBuilder()
                             .setCustomerName(customerName)
-                            .setBaseDish("Chef's Woodfired Special Pizza", 480.0)
-                            .setSize("Large")
-                            .addTopping("Smoked Gouda")
-                            .addTopping("Black Olives")
-                            .setSideDrink("Mint Mojito Cooler")
-                            .setSpiceLevel("Medium")
-                            .setSpecialInstructions("Extra garlic dip")
-                            .build();
+                            .setBaseDish(baseDish.isEmpty() ? "Gourmet Brioche Burger" : baseDish, basePrice > 0 ? basePrice : 240.0)
+                            .setSize(size.isEmpty() ? "Regular" : size)
+                            .setSideDrink(sideDrink.isEmpty() ? "None" : sideDrink)
+                            .setSpiceLevel(spiceLevel.isEmpty() ? "Medium" : spiceLevel)
+                            .setSpecialInstructions(instructions.isEmpty() ? "None" : instructions);
+
+                    if (!toppingsStr.isEmpty()) {
+                        String[] items = toppingsStr.split(",");
+                        for (String item : items) {
+                            String trimmed = item.trim();
+                            if (!trimmed.isEmpty()) {
+                                builder.addTopping(trimmed);
+                            }
+                        }
+                    }
+
+                    order = builder.build();
+                    subtotal = order.calculateSubtotal();
+                    dishName = order.getBaseDish() + " (" + order.getSize() + ")";
+                    System.out.println("[BUILDER RESULT] " + order);
+
+                    // Prototype Registration: Save this custom configuration as an archetype
+                    if (saveAsProto) {
+                        savedProtoKey = protoName.isEmpty()
+                                ? "CUSTOM_" + (System.currentTimeMillis() % 1000)
+                                : protoName.toUpperCase().replaceAll("[^A-Z0-9_]", "_");
+                        ReorderableMeal newProto = new ReorderableMeal(
+                                "ORD-P" + (int)(Math.random() * 900 + 100),
+                                customerName,
+                                dishName,
+                                subtotal,
+                                order.getToppings(),
+                                "Saved Custom Archetype"
+                        );
+                        OrderRegistry.registerStaticPrototype(savedProtoKey, newProto);
+                        System.out.println("\n=== [PROTOTYPE REGISTRATION] Saved as Reusable Archetype ===");
+                        System.out.println("[PROTOTYPE] Saved custom order as archetype '" + savedProtoKey + "' in OrderRegistry.");
+                        System.out.println("[PROTOTYPE] Archetype ticket ready for 1-click cloning: " + newProto);
+                    }
+                } else {
+                    // Standard presets via MealDirector
+                    System.out.println("=== [BUILDER PATTERN] Constructing Meal via MealDirector ===");
+                    MealDirector director = new MealDirector();
+
+                    if ("BURGER".equalsIgnoreCase(preset) || preset.contains("Burger")) {
+                        order = director.constructBurgerCombo(customerName);
+                    } else if ("FITNESS".equalsIgnoreCase(preset) || preset.contains("Lunchbox") || preset.contains("Healthy")) {
+                        order = director.constructFitnessMeal(customerName);
+                    } else if ("FEAST".equalsIgnoreCase(preset) || preset.contains("Pizza")) {
+                        order = director.constructPartyFeast(customerName);
+                    } else {
+                        order = director.constructBurgerCombo(customerName);
+                    }
+
+                    subtotal = order.calculateSubtotal();
+                    dishName = order.getBaseDish() + " (" + order.getSize() + ")";
+                    System.out.println("[BUILDER RESULT] " + order);
                 }
 
-                subtotal = order.calculateSubtotal();
-                dishName = order.getBaseDish() + " (" + order.getSize() + ")";
-                System.out.println("[BUILDER RESULT] " + order);
-
-                // 2. Prototype Pattern (If requested)
-                if (usePrototype) {
+                // Prototype Pattern demonstration if requested alongside normal build
+                if (usePrototype && !cloneFromProto) {
                     System.out.println("\n=== [PROTOTYPE PATTERN] 1-Click Reorder Cloning ===");
-                    OrderRegistry registry = new OrderRegistry();
-                    ReorderableMeal cloned = registry.getClone("WEEKLY_LUNCH");
-                    System.out.println("[PROTOTYPE] Cloned past ticket: " + cloned);
-                    cloned.setCustomerName(customerName);
-                    cloned.addAddon("Chef Special Truffle Dip");
-                    System.out.println("[PROTOTYPE] Modified cloned ticket independently: " + cloned);
+                    String key = prototypeKey.isEmpty() ? "BURGER_COMBO" : prototypeKey;
+                    ReorderableMeal cloned = OrderRegistry.getStaticClone(key);
+                    if (cloned != null) {
+                        System.out.println("[PROTOTYPE] Cloned saved archetype: " + cloned);
+                        cloned.setCustomerName(customerName);
+                        cloned.addAddon("Extra Chef Topping");
+                        System.out.println("[PROTOTYPE] Modified cloned ticket independently: " + cloned);
+                    }
                 }
 
                 // 3. Strategy Pattern (Dynamic Discounts)
@@ -353,7 +430,8 @@ public class QuickBiteServer {
                 + "\"discount\":" + discount + ","
                 + "\"total\":" + payable + ","
                 + "\"strategy\":" + escapeJsonString(strategyName) + ","
-                + "\"workflow\":" + escapeJsonString(workflowName)
+                + "\"workflow\":" + escapeJsonString(workflowName) + ","
+                + "\"savedPrototypeKey\":" + escapeJsonString(savedProtoKey)
                 + "}";
 
             byte[] resp = json.getBytes("UTF-8");
@@ -364,7 +442,7 @@ public class QuickBiteServer {
         }
     }
 
-    // ── Tiny JSON helpers ────────────────────────────────────────────────
+    // -- Tiny JSON helpers ------------------------------------------------
     private static String jsonString(String json, String key) {
         String search = "\"" + key + "\"";
         int idx = json.indexOf(search);

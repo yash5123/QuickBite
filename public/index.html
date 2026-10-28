@@ -869,6 +869,515 @@
         font-size: 1.15rem;
       }
     }
+
+    /* -- 3D MEAL BUILDER & INGREDIENT STUDIO (KFC / DOMINO'S STYLE) -- */
+    .active-meal-card {
+      background: var(--surface-well);
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .active-meal-name {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-top: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .active-meal-price {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--green);
+      background: #E8F5E9;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 2px 8px;
+      box-shadow: 2px 2px 0 var(--ink);
+      white-space: nowrap;
+    }
+
+    .active-meal-ingredients {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #475569;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* Modal Backdrop */
+    .brutal-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.72);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-normal) ease;
+    }
+
+    .brutal-modal-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal Dialog */
+    .brutal-modal-dialog {
+      background: var(--paper);
+      border: var(--border-w-lg) solid var(--ink);
+      border-radius: var(--radius-lg);
+      box-shadow: 12px 12px 0 var(--ink);
+      width: 100%;
+      max-width: 1080px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(24px) scale(0.97);
+      transition: transform var(--dur-smooth) cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .brutal-modal-backdrop.is-open .brutal-modal-dialog {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      background: var(--yellow);
+      border-bottom: var(--border-w) solid var(--ink);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.28rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .modal-close-btn {
+      background: #FFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: 2px 2px 0 var(--ink);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+    }
+
+    .modal-close-btn:hover {
+      background: #FEE2E2;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .modal-close-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--ink);
+    }
+
+    .modal-content-grid {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      flex: 1;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    /* Left 3D Viewport Column */
+    .modal-preview-col {
+      background: #FDF9F0;
+      border-right: var(--border-w) solid var(--ink);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .food-3d-stage {
+      background: #FFFFFF;
+      border: var(--border-w) solid var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      height: 310px;
+      perspective: 850px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background-image: radial-gradient(circle, #CBD5E1 1.5px, transparent 1.5px);
+      background-size: 18px 18px;
+    }
+
+    .food-3d-scene {
+      width: 250px;
+      transform-style: preserve-3d;
+      transform: rotateX(24deg) rotateZ(-12deg) translateY(-4px);
+      transition: transform 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .food-3d-stage:hover .food-3d-scene {
+      transform: rotateX(16deg) rotateZ(-6deg) translateY(-8px);
+    }
+
+    /* Dynamic Food Layers */
+    .food-layer {
+      width: 100%;
+      padding: 7px 12px;
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: layerDropIn 0.28s ease-out forwards;
+      user-select: none;
+    }
+
+    @keyframes layerDropIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.92);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .layer-top-bun {
+      background: #E5A84B;
+      color: #2D1500;
+      border-radius: 20px 20px 6px 6px;
+      padding-top: 10px;
+      box-shadow: 3px 4px 0 var(--ink);
+    }
+
+    .layer-bottom-bun {
+      background: #D97706;
+      color: #2D1500;
+      border-radius: 6px 6px 16px 16px;
+      padding-bottom: 9px;
+    }
+
+    .layer-patty {
+      background: #78350F;
+      color: #FEF3C7;
+      border-radius: 8px;
+    }
+
+    .layer-tomato {
+      background: #EF4444;
+      color: #FFFFFF;
+      border-radius: 6px;
+    }
+
+    .layer-cheese {
+      background: #FBBF24;
+      color: #1F2937;
+      border-radius: 6px;
+    }
+
+    .layer-jalapeno {
+      background: #10B981;
+      color: #FFFFFF;
+      border-radius: 6px;
+    }
+
+    .layer-lettuce {
+      background: #84CC16;
+      color: #064E3B;
+      border-radius: 6px;
+    }
+
+    .layer-mushroom {
+      background: #92400E;
+      color: #FEF3C7;
+      border-radius: 6px;
+    }
+
+    .layer-onion {
+      background: #C084FC;
+      color: #3B0764;
+      border-radius: 6px;
+    }
+
+    .layer-bacon {
+      background: #B91C1C;
+      color: #FFFFFF;
+      border-radius: 6px;
+    }
+
+    /* Live Cost & Builder Audit Card */
+    .builder-pricing-box {
+      background: #FFFFFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .builder-cost-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .builder-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px dashed var(--ink);
+      padding-top: 8px;
+      margin-top: 8px;
+    }
+
+    .builder-total-amount {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .pattern-callout-pill {
+      background: #FEF9C3;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      font-size: 0.77rem;
+      line-height: 1.45;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    /* Right Controls Column */
+    .modal-controls-col {
+      padding: 22px 26px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .builder-step-header {
+      font-family: var(--font-display);
+      font-size: 0.96rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .builder-step-badge {
+      background: var(--ink);
+      color: #FFF;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+
+    /* Interactive Pill Grids */
+    .builder-pill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .builder-option-pill {
+      background: #FFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: all var(--dur-fast) ease;
+      user-select: none;
+    }
+
+    .builder-option-pill:hover {
+      background: #F8FAFC;
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .builder-option-pill.is-selected {
+      background: #FFFDE7;
+      border-color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      outline: 2px solid var(--yellow);
+    }
+
+    .pill-title {
+      font-family: var(--font-display);
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .pill-subtitle {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #64748B;
+    }
+
+    /* Domino's / KFC Style Ingredient Checkbox Pills */
+    .toppings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .topping-item-card {
+      background: #FFF;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--ink);
+      transition: all var(--dur-fast) ease;
+      user-select: none;
+    }
+
+    .topping-item-card:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .topping-item-card.is-active {
+      background: #DCFCE7;
+      border-color: var(--ink);
+    }
+
+    .topping-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .topping-name {
+      font-family: var(--font-display);
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .topping-price {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #059669;
+    }
+
+    .topping-toggle-box {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--ink);
+      border-radius: 4px;
+      background: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      transition: all var(--dur-fast) ease;
+    }
+
+    .topping-item-card.is-active .topping-toggle-box {
+      background: var(--ink);
+      color: #FFF;
+    }
+
+    /* Prototype Box within Customizer */
+    .prototype-builder-box {
+      background: #F5F3FF;
+      border: 2px solid var(--purple);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .prototype-checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Modal Footer */
+    .modal-footer {
+      background: var(--surface-alt);
+      border-top: var(--border-w) solid var(--ink);
+      padding: 12px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .modal-content-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+      .modal-preview-col {
+        border-right: none;
+        border-bottom: var(--border-w) solid var(--ink);
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1061,16 +1570,54 @@
               
               <!-- Sub-Box 1: Meal Builder & Prototype -->
               <div class="config-sub-box">
-                <div class="config-sub-heading">1. Meal Builder & Prototype</div>
-                <div class="form-field">
-                  <label class="brutal-label" for="mealPreset">Meal Prototype Archetype</label>
-                  <select id="mealPreset" class="brutal-select">
-                    <option value="Gourmet Burger Box" selected>Gourmet Burger Box (Builder + Fries + Truffle Dip)</option>
-                    <option value="Woodfired Pizza Feast">Woodfired Pizza Feast (Builder + Garlic Bread + Mint Mojito)</option>
-                    <option value="Executive Lunchbox">Executive Lunchbox (Healthy Grain Bowl + Cold Pressed Juice)</option>
-                  </select>
+                <div class="config-sub-heading" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>1. Meal Builder & Prototype</span>
+                  <span class="brutal-badge" style="background: var(--yellow); font-size: 0.72rem;">CREATIONAL</span>
                 </div>
-                <div class="form-field">
+
+                <!-- Hidden fallback for legacy scripts -->
+                <input type="hidden" id="mealPreset" value="Gourmet Burger Box" />
+
+                <!-- Active Configured Meal Summary Card -->
+                <div id="activeMealSummaryCard" class="active-meal-card">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                    <div>
+                      <span id="activeMealBadge" class="brutal-badge" style="background: var(--green); color: #fff; font-size: 0.72rem; padding: 2px 6px;">CUSTOM BUILD (BUILDER)</span>
+                      <div id="activeMealTitle" class="active-meal-name">Brioche Artisan Burger (Medium)</div>
+                    </div>
+                    <div id="activeMealPrice" class="active-meal-price">Rs. 565</div>
+                  </div>
+                  <div id="activeMealIngredients" class="active-meal-ingredients">
+                    Fresh Tomatoes, Cheddar Cheese, Spicy Jalapenos, Crisp Lettuce + Salted Fries & Cola (Medium spice)
+                  </div>
+                </div>
+
+                <!-- Trigger 3D Customizer Modal Button -->
+                <button type="button" class="brutal-btn brutal-btn-yellow" style="width: 100%; font-size: 0.92rem; min-height: 44px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openMealBuilderModal()">
+                  <span>🛠️</span>
+                  <span>CUSTOMIZE IN 3D MEAL BUILDER</span>
+                  <span style="font-size: 0.72rem; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 3px;">KFC / DOMINO'S STYLE</span>
+                </button>
+
+                <!-- 1-Click Prototype Clone Selector -->
+                <div class="form-field" style="margin-bottom: 10px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label class="brutal-label" for="prototypeSelector" style="margin-bottom: 0;">🧬 1-Click Prototype Clone</label>
+                    <span style="font-size: 0.7rem; font-weight: 700; color: #475569;">DEEP COPY</span>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <select id="prototypeSelector" class="brutal-select" style="flex: 1;" onchange="onPrototypeSelectChange()">
+                      <option value="BURGER_COMBO" selected>Gourmet Burger Combo (Default Archetype)</option>
+                      <option value="WEEKEND_PIZZA">Woodfired Pizza Feast (Default Archetype)</option>
+                      <option value="WEEKLY_LUNCH">Executive Grain Lunchbox (Default Archetype)</option>
+                    </select>
+                    <button type="button" class="brutal-btn" style="padding: 0 12px; background: var(--purple); color: #fff; min-height: 40px; font-size: 0.82rem;" onclick="cloneAndApplyPrototype()">
+                      CLONE
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-field" style="margin-bottom: 0;">
                   <label class="brutal-label" for="quantity">Quantity (Clone Multiplier)</label>
                   <input id="quantity" class="brutal-input" type="number" value="2" min="1" max="10" />
                 </div>
@@ -1217,11 +1764,569 @@
 
   </div>
 
+  <!-- 3D MEAL BUILDER & INGREDIENT STUDIO MODAL (KFC / DOMINO'S STYLE) -->
+  <div id="mealBuilderModal" class="brutal-modal-backdrop" onclick="onBackdropClick(event)">
+    <div class="brutal-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="builderModalTitle">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span style="font-size: 1.5rem;">🍔</span>
+          <h2 id="builderModalTitle" class="modal-title">3D MEAL BUILDER & INGREDIENT STUDIO</h2>
+          <span class="brutal-badge" style="background: var(--ink); color: #fff; font-size: 0.72rem;">BUILDER + PROTOTYPE PATTERNS</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeMealBuilderModal()">
+          <span>✖</span>
+          <span>CLOSE</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Two-Column Studio) -->
+      <div class="modal-content-grid">
+
+        <!-- Left Column: Live 3D Food Assembly Viewport & Price Ledger -->
+        <div class="modal-preview-col">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="brutal-badge" style="background: var(--cyan); font-size: 0.75rem;">LIVE 3D ISOMETRIC VIEWPORT</span>
+            <span style="font-size: 0.72rem; color: #64748B; font-weight: 700;">CSS 3D PERSPECTIVE</span>
+          </div>
+
+          <!-- 3D Food Viewport Stage -->
+          <div class="food-3d-stage">
+            <div id="food3dScene" class="food-3d-scene">
+              <!-- Dynamically populated 3D food layers -->
+            </div>
+          </div>
+
+          <!-- Live Cost Calculation Ledger -->
+          <div class="builder-pricing-box">
+            <div style="font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; margin-bottom: 8px; color: var(--ink);">
+              LIVE BUILD COST LEDGER
+            </div>
+            <div class="builder-cost-row">
+              <span id="ledgerBaseName">Brioche Artisan Burger (Medium)</span>
+              <span id="ledgerBasePrice">Rs. 350</span>
+            </div>
+            <div class="builder-cost-row">
+              <span id="ledgerToppingsName">Toppings (4 selected)</span>
+              <span id="ledgerToppingsPrice">+Rs. 125</span>
+            </div>
+            <div class="builder-cost-row">
+              <span id="ledgerSideName">Salted Fries + Cold Cola</span>
+              <span id="ledgerSidePrice">+Rs. 90</span>
+            </div>
+            <div class="builder-total-row">
+              <span style="font-weight: 800; font-size: 0.95rem;">TOTAL BUILD PRICE</span>
+              <span id="ledgerTotalPrice" class="builder-total-amount">Rs. 565</span>
+            </div>
+          </div>
+
+          <!-- GoF Architectural Pattern Explanation Card -->
+          <div class="pattern-callout-pill">
+            <div style="font-weight: 800; margin-bottom: 3px; color: #854D0E;">
+              ⚙️ GoF Creational Synergy:
+            </div>
+            <div style="color: #451A03;">
+              <strong>Builder Pattern</strong> constructs complex, multi-layered meals step-by-step with decoupled components. <strong>Prototype Pattern</strong> allows finished configurations to be saved as master archetypes and reproduced via 1-click deep cloning without re-running the construction steps.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Ingredient Steppers & Customizer Controls -->
+        <div class="modal-controls-col">
+
+          <!-- Step 1: Base Dish -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge">STEP 1</span>
+              <span>Select Base Dish Core</span>
+            </div>
+            <div class="builder-pill-grid">
+              <div class="builder-option-pill is-selected" onclick="selectBaseDish('Brioche Artisan Burger', 280, this)">
+                <span class="pill-title">🍔 Brioche Burger</span>
+                <span class="pill-subtitle">Base Rs. 280</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectBaseDish('Woodfired Artisan Pizza', 380, this)">
+                <span class="pill-title">🍕 Sourdough Pizza</span>
+                <span class="pill-subtitle">Base Rs. 380</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectBaseDish('Protein Harvest Bowl', 320, this)">
+                <span class="pill-title">🥗 Harvest Bowl</span>
+                <span class="pill-subtitle">Base Rs. 320</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectBaseDish('Crispy Chicken Box', 340, this)">
+                <span class="pill-title">🍗 Crispy Tender Box</span>
+                <span class="pill-subtitle">Base Rs. 340</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Portion Size -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge">STEP 2</span>
+              <span>Portion Size Multiplier</span>
+            </div>
+            <div class="builder-pill-grid">
+              <div class="builder-option-pill" onclick="selectPortionSize('Regular', 1.0, this)">
+                <span class="pill-title">Regular</span>
+                <span class="pill-subtitle">1.0x Scale</span>
+              </div>
+              <div class="builder-option-pill is-selected" onclick="selectPortionSize('Medium', 1.25, this)">
+                <span class="pill-title">Medium</span>
+                <span class="pill-subtitle">1.25x Scale</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectPortionSize('Large', 1.5, this)">
+                <span class="pill-title">Large / Feast</span>
+                <span class="pill-subtitle">1.50x Scale</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Domino's / KFC Style Ingredient Customizer -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge">STEP 3</span>
+              <span>Domino's / KFC Style Ingredients & Fresh Toppings</span>
+            </div>
+            <div class="toppings-grid">
+              
+              <!-- Fresh Farm Tomatoes -->
+              <div class="topping-item-card is-active" data-topping="Fresh Tomatoes" data-price="30" data-layer="layer-tomato" data-icon="🍅" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🍅 Fresh Tomatoes</span>
+                  <span class="topping-price">+Rs. 30</span>
+                </div>
+                <div class="topping-toggle-box">✓</div>
+              </div>
+
+              <!-- Aged Cheddar Slice -->
+              <div class="topping-item-card is-active" data-topping="Cheddar Cheese" data-price="50" data-layer="layer-cheese" data-icon="🧀" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🧀 Aged Cheddar</span>
+                  <span class="topping-price">+Rs. 50</span>
+                </div>
+                <div class="topping-toggle-box">✓</div>
+              </div>
+
+              <!-- Spicy Pickled Jalapenos -->
+              <div class="topping-item-card is-active" data-topping="Spicy Jalapenos" data-price="25" data-layer="layer-jalapeno" data-icon="🌶️" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🌶️ Fire Jalapenos</span>
+                  <span class="topping-price">+Rs. 25</span>
+                </div>
+                <div class="topping-toggle-box">✓</div>
+              </div>
+
+              <!-- Crisp Iceberg Lettuce -->
+              <div class="topping-item-card is-active" data-topping="Crisp Lettuce" data-price="20" data-layer="layer-lettuce" data-icon="🥬" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🥬 Crisp Lettuce</span>
+                  <span class="topping-price">+Rs. 20</span>
+                </div>
+                <div class="topping-toggle-box">✓</div>
+              </div>
+
+              <!-- Sauteed Button Mushrooms -->
+              <div class="topping-item-card" data-topping="Sauteed Mushrooms" data-price="40" data-layer="layer-mushroom" data-icon="🍄" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🍄 Sauteed Mushrooms</span>
+                  <span class="topping-price">+Rs. 40</span>
+                </div>
+                <div class="topping-toggle-box"></div>
+              </div>
+
+              <!-- Caramelized Red Onions -->
+              <div class="topping-item-card" data-topping="Caramelized Onions" data-price="25" data-layer="layer-onion" data-icon="🧅" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🧅 Caramelized Onions</span>
+                  <span class="topping-price">+Rs. 25</span>
+                </div>
+                <div class="topping-toggle-box"></div>
+              </div>
+
+              <!-- Smoky Bacon / Crispy Tofu Strips -->
+              <div class="topping-item-card" data-topping="Smoky Crispy Strips" data-price="60" data-layer="layer-bacon" data-icon="🥓" onclick="toggleToppingCard(this)">
+                <div class="topping-info">
+                  <span class="topping-name">🥓 Crispy Strips</span>
+                  <span class="topping-price">+Rs. 60</span>
+                </div>
+                <div class="topping-toggle-box"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Step 4: Sides & Beverage Pairing -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge">STEP 4</span>
+              <span>Sides & Beverage Pairing</span>
+            </div>
+            <div class="builder-pill-grid">
+              <div class="builder-option-pill is-selected" onclick="selectSideDrink('Salted Fries + Cold Cola', 90, this)">
+                <span class="pill-title">🍟 Fries & Cola</span>
+                <span class="pill-subtitle">+Rs. 90</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectSideDrink('Peri Peri Fries + Mint Mojito', 130, this)">
+                <span class="pill-title">🌶️ Peri Fries & Mojito</span>
+                <span class="pill-subtitle">+Rs. 130</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectSideDrink('Truffle Wedges + Mango Cooler', 160, this)">
+                <span class="pill-title">🥔 Truffle & Mango</span>
+                <span class="pill-subtitle">+Rs. 160</span>
+              </div>
+              <div class="builder-option-pill" onclick="selectSideDrink('None (A La Carte)', 0, this)">
+                <span class="pill-title">🚫 No Sides</span>
+                <span class="pill-subtitle">Rs. 0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Spice Meter & Kitchen Instructions -->
+          <div>
+            <div class="builder-step-header">
+              <span class="builder-step-badge">STEP 5</span>
+              <span>Spice Meter & Kitchen Directives</span>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <button type="button" class="brutal-btn spice-btn" style="flex: 1; padding: 6px 4px; font-size: 0.78rem;" onclick="setSpiceLevel('Mild', this)">🌶️ MILD</button>
+              <button type="button" class="brutal-btn spice-btn is-selected" style="flex: 1; padding: 6px 4px; font-size: 0.78rem; background: var(--yellow);" onclick="setSpiceLevel('Medium', this)">🌶️🌶️ MEDIUM</button>
+              <button type="button" class="brutal-btn spice-btn" style="flex: 1; padding: 6px 4px; font-size: 0.78rem;" onclick="setSpiceLevel('Spicy', this)">🌶️🌶️🌶️ HOT</button>
+              <button type="button" class="brutal-btn spice-btn" style="flex: 1; padding: 6px 4px; font-size: 0.78rem;" onclick="setSpiceLevel('Inferno', this)">🔥 INFERNO</button>
+            </div>
+            <input id="builderSpecialInstructions" class="brutal-input" type="text" placeholder="Special Chef notes (e.g. Extra toasted brioche bun, no mayo)..." value="Extra toasted brioche bun" />
+          </div>
+
+          <!-- Step 6: Prototype Archetype Registration -->
+          <div class="prototype-builder-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span class="builder-step-badge" style="background: var(--purple);">PROTOTYPE PATTERN</span>
+              <span style="font-size: 0.72rem; font-weight: 700; color: #6B21A8;">ORDERREGISTRY CACHE</span>
+            </div>
+            <label class="prototype-checkbox-wrap">
+              <input type="checkbox" id="chkSavePrototype" style="width: 18px; height: 18px; cursor: pointer;" onchange="togglePrototypeInput(this)" />
+              <span>Save this custom build as reusable Prototype Archetype</span>
+            </label>
+            <div id="protoNameWrap" style="display: none; margin-top: 10px;">
+              <label class="brutal-label" for="txtPrototypeName" style="font-size: 0.76rem;">Archetype Identifier Name:</label>
+              <input id="txtPrototypeName" class="brutal-input" type="text" placeholder="e.g. Aman's Supreme Spicy Burger" value="Chef Custom Deluxe Combo" />
+              <div style="font-size: 0.72rem; color: #4B5563; margin-top: 4px;">
+                Registers with `OrderRegistry` so you and any user can 1-click reorder via `ReorderableMeal.cloneOrder()`.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.1rem;">📦</span>
+          <span id="modalFooterSummary" style="font-size: 0.86rem; font-weight: 700; color: #1E293B;">
+            Brioche Artisan Burger (Medium) + 4 Toppings + Fries & Cola
+          </span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="brutal-btn" style="padding: 10px 18px;" onclick="closeMealBuilderModal()">
+            CANCEL
+          </button>
+          <button type="button" class="brutal-btn brutal-btn-green" style="padding: 10px 22px; font-weight: 800;" onclick="applyBuiltMeal()">
+            🛒 APPLY CUSTOM MEAL TO ORDER
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Local Motion Bundle & Heavy Motion Wrapper -->
   <script src="libs/motion.js"></script>
   <script src="components/brutal-motion.js"></script>
 
   <script>
+
+    // -------------------------------------------------------------
+    // Builder & Prototype Custom State (KFC / Domino's Style)
+    // -------------------------------------------------------------
+    let currentMealBuild = {
+      isCustomBuild: true,
+      isCloneFromPrototype: false,
+      prototypeKey: '',
+      baseDish: 'Brioche Artisan Burger',
+      rawBasePrice: 280,
+      size: 'Medium',
+      sizeMultiplier: 1.25,
+      toppings: [
+        { name: 'Fresh Tomatoes', price: 30, layerClass: 'layer-tomato', icon: '🍅' },
+        { name: 'Cheddar Cheese', price: 50, layerClass: 'layer-cheese', icon: '🧀' },
+        { name: 'Spicy Jalapenos', price: 25, layerClass: 'layer-jalapeno', icon: '🌶️' },
+        { name: 'Crisp Lettuce', price: 20, layerClass: 'layer-lettuce', icon: '🥬' }
+      ],
+      sideDrink: 'Salted Fries + Cold Cola',
+      sidePrice: 90,
+      spiceLevel: 'Medium',
+      specialInstructions: 'Extra toasted brioche bun',
+      saveAsPrototype: false,
+      prototypeName: 'Chef Custom Deluxe Combo'
+    };
+
+    function openMealBuilderModal() {
+      const modal = document.getElementById('mealBuilderModal');
+      if (modal) {
+        modal.classList.add('is-open');
+        update3DStackPreview();
+      }
+    }
+
+    function closeMealBuilderModal() {
+      const modal = document.getElementById('mealBuilderModal');
+      if (modal) {
+        modal.classList.remove('is-open');
+      }
+    }
+
+    function onBackdropClick(e) {
+      if (e.target && e.target.id === 'mealBuilderModal') {
+        closeMealBuilderModal();
+      }
+    }
+
+    function selectBaseDish(name, price, el) {
+      currentMealBuild.baseDish = name;
+      currentMealBuild.rawBasePrice = price;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      update3DStackPreview();
+    }
+
+    function selectPortionSize(name, multiplier, el) {
+      currentMealBuild.size = name;
+      currentMealBuild.sizeMultiplier = multiplier;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      update3DStackPreview();
+    }
+
+    function toggleToppingCard(el) {
+      const toppingName = el.getAttribute('data-topping');
+      const price = parseFloat(el.getAttribute('data-price')) || 0;
+      const layerClass = el.getAttribute('data-layer');
+      const icon = el.getAttribute('data-icon');
+
+      const idx = currentMealBuild.toppings.findIndex(t => t.name === toppingName);
+      if (idx >= 0) {
+        currentMealBuild.toppings.splice(idx, 1);
+        el.classList.remove('is-active');
+        const box = el.querySelector('.topping-toggle-box');
+        if (box) box.textContent = '';
+      } else {
+        currentMealBuild.toppings.push({ name: toppingName, price, layerClass, icon });
+        el.classList.add('is-active');
+        const box = el.querySelector('.topping-toggle-box');
+        if (box) box.textContent = '✓';
+      }
+      update3DStackPreview();
+    }
+
+    function selectSideDrink(name, price, el) {
+      currentMealBuild.sideDrink = name;
+      currentMealBuild.sidePrice = price;
+      el.parentElement.querySelectorAll('.builder-option-pill').forEach(p => p.classList.remove('is-selected'));
+      el.classList.add('is-selected');
+      update3DStackPreview();
+    }
+
+    function setSpiceLevel(level, btn) {
+      currentMealBuild.spiceLevel = level;
+      document.querySelectorAll('.spice-btn').forEach(b => {
+        b.classList.remove('is-selected');
+        b.style.background = '';
+      });
+      btn.classList.add('is-selected');
+      btn.style.background = 'var(--yellow)';
+    }
+
+    function togglePrototypeInput(chk) {
+      currentMealBuild.saveAsPrototype = chk.checked;
+      const wrap = document.getElementById('protoNameWrap');
+      if (wrap) wrap.style.display = chk.checked ? 'block' : 'none';
+    }
+
+    function update3DStackPreview() {
+      const scene = document.getElementById('food3dScene');
+      if (!scene) return;
+
+      const basePriceScaled = Math.round(currentMealBuild.rawBasePrice * currentMealBuild.sizeMultiplier);
+      const toppingsTotal = currentMealBuild.toppings.reduce((sum, t) => sum + t.price, 0);
+      const grandTotal = basePriceScaled + toppingsTotal + currentMealBuild.sidePrice;
+
+      // Update Ledger
+      const ledgerBase = document.getElementById('ledgerBaseName');
+      if (ledgerBase) ledgerBase.textContent = `${currentMealBuild.baseDish} (${currentMealBuild.size})`;
+      const ledgerBaseP = document.getElementById('ledgerBasePrice');
+      if (ledgerBaseP) ledgerBaseP.textContent = `Rs. ${basePriceScaled}`;
+
+      const ledgerTopN = document.getElementById('ledgerToppingsName');
+      if (ledgerTopN) ledgerTopN.textContent = `Toppings (${currentMealBuild.toppings.length} selected)`;
+      const ledgerTopP = document.getElementById('ledgerToppingsPrice');
+      if (ledgerTopP) ledgerTopP.textContent = `+Rs. ${toppingsTotal}`;
+
+      const ledgerSideN = document.getElementById('ledgerSideName');
+      if (ledgerSideN) ledgerSideN.textContent = currentMealBuild.sideDrink;
+      const ledgerSideP = document.getElementById('ledgerSidePrice');
+      if (ledgerSideP) ledgerSideP.textContent = `+Rs. ${currentMealBuild.sidePrice}`;
+
+      const ledgerTotP = document.getElementById('ledgerTotalPrice');
+      if (ledgerTotP) ledgerTotP.textContent = `Rs. ${grandTotal}`;
+
+      const footerSum = document.getElementById('modalFooterSummary');
+      if (footerSum) {
+        footerSum.textContent = `${currentMealBuild.baseDish} (${currentMealBuild.size}) + ${currentMealBuild.toppings.length} Fresh Toppings + ${currentMealBuild.sideDrink}`;
+      }
+
+      // Render 3D Visual Layers
+      let html = '';
+
+      // Top Bun / Crust
+      if (currentMealBuild.baseDish.includes('Pizza')) {
+        html += '<div class="food-layer layer-top-bun"><span>🍕 Sourdough Crust & Herb Glaze</span><span>CRUST</span></div>';
+      } else if (currentMealBuild.baseDish.includes('Bowl')) {
+        html += '<div class="food-layer layer-top-bun"><span>🥗 Microgreens & Toasted Seeds</span><span>TOPPING</span></div>';
+      } else {
+        html += '<div class="food-layer layer-top-bun"><span>🥯 Golden Toasted Brioche Bun</span><span>TOP BUN</span></div>';
+      }
+
+      // Selected Topping Layers
+      currentMealBuild.toppings.forEach(t => {
+        html += `<div class="food-layer ${t.layerClass}"><span>${t.icon} ${t.name}</span><span>+Rs. ${t.price}</span></div>`;
+      });
+
+      // Core Patty / Base
+      if (currentMealBuild.baseDish.includes('Pizza')) {
+        html += '<div class="food-layer layer-patty"><span>🔥 Smoked Mozzarella & Marinara Base</span><span>CORE</span></div>';
+      } else if (currentMealBuild.baseDish.includes('Bowl')) {
+        html += '<div class="food-layer layer-patty"><span>🍚 Quinoa & Avocado Harvest Core</span><span>CORE</span></div>';
+      } else if (currentMealBuild.baseDish.includes('Chicken')) {
+        html += '<div class="food-layer layer-patty"><span>🍗 Crispy Triple-Battered Fillet</span><span>CORE</span></div>';
+      } else {
+        html += '<div class="food-layer layer-patty"><span>🥩 Flame-Grilled Prime Patty</span><span>PATTY</span></div>';
+      }
+
+      // Bottom Bun / Base
+      if (currentMealBuild.baseDish.includes('Pizza')) {
+        html += '<div class="food-layer layer-bottom-bun"><span>🥖 Stone-Baked Sourdough Base</span><span>BASE</span></div>';
+      } else if (currentMealBuild.baseDish.includes('Bowl')) {
+        html += '<div class="food-layer layer-bottom-bun"><span>🥣 Insulated Eco Bowl Base</span><span>BASE</span></div>';
+      } else {
+        html += '<div class="food-layer layer-bottom-bun"><span>🍞 Toasted Brioche Bottom Bun</span><span>BOTTOM</span></div>';
+      }
+
+      scene.innerHTML = html;
+    }
+
+    function applyBuiltMeal() {
+      currentMealBuild.isCustomBuild = true;
+      currentMealBuild.isCloneFromPrototype = false;
+      currentMealBuild.prototypeKey = '';
+      currentMealBuild.specialInstructions = document.getElementById('builderSpecialInstructions')?.value || '';
+      const chk = document.getElementById('chkSavePrototype');
+      currentMealBuild.saveAsPrototype = chk ? chk.checked : false;
+      currentMealBuild.prototypeName = document.getElementById('txtPrototypeName')?.value || 'Custom Meal Archetype';
+
+      updateMainSummaryCard();
+      closeMealBuilderModal();
+
+      appendLog('BUILDER', 'log-badge-auth', `Configured Custom Order: ${currentMealBuild.baseDish} (${currentMealBuild.size}) with ${currentMealBuild.toppings.length} custom ingredients.`);
+    }
+
+    function updateMainSummaryCard() {
+      const titleEl = document.getElementById('activeMealTitle');
+      const badgeEl = document.getElementById('activeMealBadge');
+      const priceEl = document.getElementById('activeMealPrice');
+      const ingEl = document.getElementById('activeMealIngredients');
+
+      if (!titleEl) return;
+
+      const baseScaled = Math.round(currentMealBuild.rawBasePrice * currentMealBuild.sizeMultiplier);
+      const topTotal = currentMealBuild.toppings.reduce((sum, t) => sum + t.price, 0);
+      const total = currentMealBuild.isCloneFromPrototype ? currentMealBuild.basePrice : (baseScaled + topTotal + currentMealBuild.sidePrice);
+
+      if (currentMealBuild.isCloneFromPrototype) {
+        badgeEl.textContent = 'PROTOTYPE CLONE';
+        badgeEl.style.background = 'var(--purple)';
+        titleEl.textContent = `${currentMealBuild.baseDish} [CLONED ARCHETYPE]`;
+        priceEl.textContent = `Rs. ${total}`;
+        ingEl.textContent = `Cloned archetype '${currentMealBuild.prototypeKey}' + Chef Special Truffle Dip (Cloned Customization)`;
+      } else {
+        badgeEl.textContent = 'CUSTOM BUILD (BUILDER)';
+        badgeEl.style.background = 'var(--green)';
+        titleEl.textContent = `${currentMealBuild.baseDish} (${currentMealBuild.size})`;
+        priceEl.textContent = `Rs. ${total}`;
+        const topNames = currentMealBuild.toppings.map(t => t.name).join(', ') || 'No extra toppings';
+        ingEl.textContent = `${topNames} + ${currentMealBuild.sideDrink} (${currentMealBuild.spiceLevel} spice)`;
+      }
+    }
+
+    function onPrototypeSelectChange() {
+      // Available for reactive preview if desired
+    }
+
+    function cloneAndApplyPrototype() {
+      const sel = document.getElementById('prototypeSelector');
+      const key = sel ? sel.value : 'BURGER_COMBO';
+
+      const protoArchetypes = {
+        'BURGER_COMBO': {
+          name: 'Gourmet Burger Box',
+          price: 490,
+          dish: 'Brioche Gourmet Burger Combo',
+          size: 'Medium',
+          toppings: ['Fresh Tomatoes', 'Cheddar Cheese', 'Crisp Lettuce'],
+          drink: 'Salted Fries + Truffle Dip'
+        },
+        'WEEKEND_PIZZA': {
+          name: 'Woodfired Pizza Feast',
+          price: 580,
+          dish: 'Woodfired Artisan Pizza',
+          size: 'Large',
+          toppings: ['Sauteed Mushrooms', 'Fire Jalapenos', 'Aged Cheddar'],
+          drink: 'Garlic Bread + Mint Mojito'
+        },
+        'WEEKLY_LUNCH': {
+          name: 'Executive Lunchbox',
+          price: 360,
+          dish: 'Protein Harvest Bowl',
+          size: 'Regular',
+          toppings: ['Fresh Tomatoes', 'Crisp Lettuce', 'Caramelized Onions'],
+          drink: 'Cold Pressed Juice'
+        }
+      };
+
+      const arch = protoArchetypes[key] || {
+        name: key,
+        price: 450,
+        dish: key,
+        size: 'Medium',
+        toppings: ['Custom Ingredients'],
+        drink: 'Standard Sides'
+      };
+
+      currentMealBuild.isCustomBuild = false;
+      currentMealBuild.isCloneFromPrototype = true;
+      currentMealBuild.prototypeKey = key;
+      currentMealBuild.baseDish = arch.dish;
+      currentMealBuild.basePrice = arch.price;
+      currentMealBuild.size = arch.size;
+      currentMealBuild.sideDrink = arch.drink;
+      currentMealBuild.toppings = arch.toppings.map(t => ({ name: t, price: 30, layerClass: 'layer-cheese', icon: '✨' }));
+
+      updateMainSummaryCard();
+      appendLog('PROTOTYPE', 'log-badge-auth', `Executed 1-Click Prototype Clone for archetype '${key}'. Deep copy ready for execution.`);
+    }
+
     let currentStage = 1;
     let orderCount = 14;
 
@@ -1448,6 +2553,9 @@
         document.getElementById('fulfillmentType').value = 'DELIVERY';
         document.getElementById('discountType').value = 'LOYALTY';
         document.getElementById('quantity').value = 2;
+        if (typeof cloneAndApplyPrototype === 'function') {
+          cloneAndApplyPrototype();
+        }
       }
     }
 
@@ -1596,12 +2704,31 @@
         if (badge) badge.textContent = 'PENDING';
       });
 
+      const baseScaled = Math.round(currentMealBuild.rawBasePrice * currentMealBuild.sizeMultiplier);
+      const topTotal = currentMealBuild.toppings.reduce((sum, t) => sum + t.price, 0);
+      const totalBuildPrice = baseScaled + topTotal + currentMealBuild.sidePrice;
+
       const payload = {
-        mealPreset: document.getElementById('mealPreset').value,
+        customerName: document.getElementById('customerName')?.value || 'Aman Gupta',
+        mealPreset: document.getElementById('mealPreset')?.value || currentMealBuild.baseDish,
         fulfillmentType: document.getElementById('fulfillmentType').value,
         discountType: document.getElementById('discountType').value,
         quantity: parseInt(document.getElementById('quantity').value) || 1,
-        cartAction: document.getElementById('cartAction').value
+        cartAction: document.getElementById('cartAction').value,
+        
+        // Custom Builder & Prototype Integration Payload
+        isCustomBuild: currentMealBuild.isCustomBuild ? 'true' : 'false',
+        cloneFromPrototype: currentMealBuild.isCloneFromPrototype ? 'true' : 'false',
+        prototypeKey: currentMealBuild.prototypeKey || '',
+        baseDish: currentMealBuild.baseDish,
+        basePrice: currentMealBuild.isCloneFromPrototype ? currentMealBuild.basePrice : totalBuildPrice,
+        size: currentMealBuild.size,
+        toppings: currentMealBuild.toppings.map(t => t.name).join(', '),
+        sideDrink: currentMealBuild.sideDrink,
+        spiceLevel: currentMealBuild.spiceLevel,
+        specialInstructions: currentMealBuild.specialInstructions,
+        saveAsPrototype: currentMealBuild.saveAsPrototype ? 'true' : 'false',
+        prototypeName: currentMealBuild.prototypeName || ''
       };
 
       try {
@@ -1640,6 +2767,17 @@
 
           appendLog(badge, badgeClass, line.trim());
         });
+
+        if (data.savedPrototypeKey && data.savedPrototypeKey.length > 0) {
+          const sel = document.getElementById('prototypeSelector');
+          if (sel && !sel.querySelector(`option[value="${data.savedPrototypeKey}"]`)) {
+            const opt = document.createElement('option');
+            opt.value = data.savedPrototypeKey;
+            opt.textContent = `${currentMealBuild.prototypeName || data.savedPrototypeKey} (Custom Archetype)`;
+            sel.appendChild(opt);
+            appendLog('PROTOTYPE', 'log-badge-success', `Registered master archetype '${data.savedPrototypeKey}' into persistent OrderRegistry cache.`);
+          }
+        }
 
         if (data.success) {
           appendLog('FULFILLED', 'log-badge-success', `Fulfillment completed. Dish: ${data.dish} | Pricing Strategy: ${data.strategy} | Final Payable: Rs. ${data.total}`);
@@ -1687,6 +2825,12 @@
     // Initial Load
     window.addEventListener('DOMContentLoaded', () => {
       renderStageDeck();
+      if (typeof updateMainSummaryCard === 'function') {
+        updateMainSummaryCard();
+      }
+      if (typeof update3DStackPreview === 'function') {
+        update3DStackPreview();
+      }
       if (window.BrutalMotion) {
         window.BrutalMotion.init();
       }
