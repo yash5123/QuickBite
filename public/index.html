@@ -870,7 +870,7 @@
       }
     }
 
-    /* -- 3D MEAL BUILDER & INGREDIENT STUDIO (KFC / DOMINO'S STYLE) -- */
+    /* -- 3D MEAL BUILDER & INGREDIENT STUDIO -- */
     .active-meal-card {
       background: var(--surface-well);
       border: 2px solid var(--ink);
@@ -1267,7 +1267,7 @@
       color: #64748B;
     }
 
-    /* Domino's / KFC Style Ingredient Checkbox Pills */
+    /* Ingredient Checkbox Pills */
     .toppings-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1596,7 +1596,6 @@
                 <button type="button" class="brutal-btn brutal-btn-yellow" style="width: 100%; font-size: 0.92rem; min-height: 44px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openMealBuilderModal()">
                   <span>🛠️</span>
                   <span>CUSTOMIZE IN 3D MEAL BUILDER</span>
-                  <span style="font-size: 0.72rem; background: var(--ink); color: #fff; padding: 2px 6px; border-radius: 3px;">KFC / DOMINO'S STYLE</span>
                 </button>
 
                 <!-- 1-Click Prototype Clone Selector -->
@@ -1764,7 +1763,7 @@
 
   </div>
 
-  <!-- 3D MEAL BUILDER & INGREDIENT STUDIO MODAL (KFC / DOMINO'S STYLE) -->
+  <!-- 3D MEAL BUILDER & INGREDIENT STUDIO MODAL -->
   <div id="mealBuilderModal" class="brutal-modal-backdrop" onclick="onBackdropClick(event)">
     <div class="brutal-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="builderModalTitle">
       
@@ -1883,11 +1882,11 @@
             </div>
           </div>
 
-          <!-- Step 3: Domino's / KFC Style Ingredient Customizer -->
+          <!-- Step 3: Ingredients & Fresh Toppings Studio -->
           <div>
             <div class="builder-step-header">
               <span class="builder-step-badge">STEP 3</span>
-              <span>Domino's / KFC Style Ingredients & Fresh Toppings</span>
+              <span>Ingredients & Fresh Toppings Studio</span>
             </div>
             <div class="toppings-grid">
               
@@ -2049,7 +2048,7 @@
   <script>
 
     // -------------------------------------------------------------
-    // Builder & Prototype Custom State (KFC / Domino's Style)
+    // Builder & Prototype Custom State
     // -------------------------------------------------------------
     let currentMealBuild = {
       isCustomBuild: true,

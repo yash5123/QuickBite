@@ -293,7 +293,7 @@ public class QuickBiteServer {
                     }
                 } else if (isCustomBuild) {
                     // Builder Pattern: Assemble piece-by-piece from 3D Customizer
-                    System.out.println("=== [BUILDER PATTERN] Constructing Custom Meal (KFC / Domino's Customizer) ===");
+                    System.out.println("=== [BUILDER PATTERN] Constructing Custom Meal (Builder Studio Customizer) ===");
                     CustomOrderBuilder builder = new CustomOrderBuilder()
                             .setCustomerName(customerName)
                             .setBaseDish(baseDish.isEmpty() ? "Gourmet Brioche Burger" : baseDish, basePrice > 0 ? basePrice : 240.0)
