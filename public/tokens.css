@@ -234,6 +234,10 @@ body {
 .brutal-btn-orange { background-color: var(--orange); color: #fff; }
 .brutal-btn-cyan { background-color: var(--cyan); }
 .brutal-btn-pink { background-color: var(--pink); color: #fff; }
+.brutal-btn-blue { background-color: var(--blue); color: #fff; }
+.brutal-btn-yellow { background-color: var(--yellow); color: var(--ink); }
+.brutal-btn-green { background-color: var(--green); color: #fff; }
+.brutal-btn-purple { background-color: var(--purple); color: #fff; }
 
 /* Inputs, Textareas, Selects */
 .brutal-input,
